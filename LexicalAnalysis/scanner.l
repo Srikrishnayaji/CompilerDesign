@@ -3,6 +3,8 @@
     int line_number = 0;
 %}
 
+/*wrong code: error_regx_string \"(.)*(\n)*(.)*     error_regex_paranthesis \((.)*(\n)+(.)*\) */
+
 identifier [a-zA-Z_][a-zA-Z0-9_]*
 numerical_constants ([0-9]*\.[0-9]+)|([0-9]+\.[0-9]*)|([0-9]+)
 char_constants '\\(.)+'|'.'
