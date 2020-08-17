@@ -1,6 +1,6 @@
-#Compiler Design
+# Compiler Design
 
-##Requirements
+## Requirements
 
 ```bash
 sudo apt-get install flex
