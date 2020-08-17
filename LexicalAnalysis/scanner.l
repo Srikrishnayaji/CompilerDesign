@@ -23,7 +23,7 @@ special_symbols \[|\]|\{|\}|\(|\)|\,;
 %%
 
 \n {line_number+=1;}
-[\t' ']* ;
+[\n\t' ']* ;
 {singleline_comment} ;
 {multiline_comment} ;
 {keywords_1}|{keywords_2} {printf("%s is a keyword\n", yytext);}
