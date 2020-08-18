@@ -40,6 +40,7 @@ int main(){
     yyin = fopen("SampleProgram.c", "r");
     yylex();
     return(0);
+    fclose(yyin);
 }
 
 int yywrap(){
