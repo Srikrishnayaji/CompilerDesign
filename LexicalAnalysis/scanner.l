@@ -37,6 +37,7 @@ special_symbols \[|\]|\{|\}|\(|\)|\,|\;
 %%
 
 int main(){
+    yyin = fopen("SampleProgram.c", "r");
     yylex();
     return(0);
 }
