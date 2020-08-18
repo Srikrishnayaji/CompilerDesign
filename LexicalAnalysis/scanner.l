@@ -13,14 +13,14 @@ keywords_1 auto|double|int|struct|break|else|long|switch|case|enum|register|type
 keywords_2 void|do|if|static|while|default|goto|volatile|const|float|short|unsigned
 multiline_comment \/\*([^(\*/)]*|(\n)*)\*\/
 singleline_comment \/\/(.)*
-binary_operators \+|\-|\*|/|%
+binary_operators \+|\-|\*|\/|\%
 unary_operators \+\+|\-\-
 relational_operators \=\=|\!\=|\>|\<|\>\=|\<\=
 logical_operators \&\&|\|\||\!
 bitwise_operators \&|\||\^|\<\<|\>\>
 assignment_operators \+\=|\-\=|\*\=|\/\=|\%\=|\=
 special_operators sizeof
-special_symbols \[|\]|\{|\}|\(|\)|\,;
+special_symbols \[|\]|\{|\}|\(|\)|\,|\;
 
 %%
 
@@ -32,7 +32,7 @@ special_symbols \[|\]|\{|\}|\(|\)|\,;
 {identifier} {printf("%s is a identifier\n", yytext);}
 {numerical_constants}|{char_constants}|{string_constants} {printf("%s is a constant\n", yytext);}
 {special_symbols} {printf("%s is a special symbol\n", yytext);}
-{unary_operators}|{special_operators}|{logical_operators}|{relational_operators}|{bitwise_operators}|{assignment_operators} { printf("%s is an operator\n", yytext);}
+{unary_operators}|{special_operators}|{logical_operators}|{relational_operators}|{bitwise_operators}|{binary_operators}|{assignment_operators} { printf("%s is an operator\n", yytext);}
 
 %%
 
