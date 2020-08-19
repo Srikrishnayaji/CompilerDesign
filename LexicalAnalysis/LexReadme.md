@@ -15,6 +15,10 @@
     [x] Regular expressions written
     [x] Basic user routine done
     [ ] Advanced user routine function
-    [ ] Error detections
+    [x] String error
+    [x] Identifier error
+    [ ] Character constant udpate
+    [ ] Paranthesis error detection
+    [ ] Symbol Table Creation
     [ ] Test Code Creation
     
