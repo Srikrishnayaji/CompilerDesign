@@ -21,6 +21,7 @@ bitwise_operators \&|\||\^|\<\<|\>\>
 assignment_operators \+\=|\-\=|\*\=|\/\=|\%\=|\=
 special_operators sizeof
 special_symbols \[|\]|\{|\}|\(|\)|\,|\;
+header_files #(.)*
 
 %%
 
@@ -28,8 +29,9 @@ special_symbols \[|\]|\{|\}|\(|\)|\,|\;
 [\n\t' ']* ;
 {singleline_comment} ;
 {multiline_comment} ;
-{keywords_1}|{keywords_2} {printf("%s is a keyword", yytext);}
-{identifier} {printf("%s is a identifier", yytext);}
+{header_files} ;
+{keywords_1}|{keywords_2} {printf("%s is a keyword\n", yytext);}
+{identifier} {printf("%s is a identifier\n", yytext);}
 {numerical_constants}|{char_constants}|{string_constants} {printf("%s is a constant\n", yytext);}
 {special_symbols} {printf("%s is a special symbol", yytext);}
 {unary_operators}|{special_operators}|{logical_operators}|{relational_operators}|{bitwise_operators}|{binary_operators}|{assignment_operators} { printf("%s is an operator", yytext);}
@@ -37,8 +39,10 @@ special_symbols \[|\]|\{|\}|\(|\)|\,|\;
 %%
 
 int main(){
+    yyin = fopen("SampleProgram.c", "r");
     yylex();
-    return(0);
+    fclose(yyin);
+    return (0);
 }
 
 int yywrap(){
