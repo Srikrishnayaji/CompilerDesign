@@ -10,12 +10,11 @@
 
 ```bash
 sudo apt-get install flex
-sudo apt-get install yacc
 ```
 
 ## Phase-1 Lexical Analysis
     1. Reads the source file and generates symbol table and constant table.
-    2. Detects minor errors and outputs it.
+    2. Detects token errors and prints it.
 
 ### Usage:
 
