@@ -1,0 +1,6 @@
+echo "Generating tokeniser program"
+lex scanner.l
+echo "Compiling lex.yy.c" 
+gcc lex.yy.c -o tokenGen
+echo "Generated tokenGen executable"
+
