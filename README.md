@@ -19,10 +19,10 @@ sudo apt-get install yacc
 
 ### Usage:
 
-    ```bash
-    git clone <repo_url>
-    cd LexicalAnalysis
-    ./scan
-    ./tokenGen
-    ```
+```bash
+git clone <repo_url>
+cd LexicalAnalysis
+./scan
+./tokenGen
+```
 
