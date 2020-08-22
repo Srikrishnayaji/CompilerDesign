@@ -183,14 +183,18 @@ operators {unary_operators}|{special_operators}|{logical_operators}|{relational_
     }
 
 ({numerical_constants}){identifier} {
-  printf("In LineNo: %d, ERROR: Invalid Identifier : %s\n", yylineno, yytext); exit(1);
+  printf("In LineNo: %d, ERROR: Invalid Identifier : %s\n", yylineno, yytext); // exit(1);
 }
 (\")(\s|{identifier}|{numerical_constants}|{operators})* {
-    printf("In LineNo: %d, ERROR: String usage error in %s\n", yylineno, yytext); exit(1);
+    printf("In LineNo: %d, ERROR: String usage error in %s\n", yylineno, yytext); // exit(1);
 }
 
 [\n\t ]*\'(\s|{identifier}|{numerical_constants}|{operators})* {
-    printf("In LineNo: %d, ERROR: Character usage error: %s\n", yylineno, yytext); exit(1);
+    printf("In LineNo: %d, ERROR: Character usage error: %s\n", yylineno, yytext); // exit(1);
+}
+
+(\s|{identifier}|{numerical_constants}|{operators})*\' {
+    printf("In LineNo: %d, ERROR: Character usage error: %s\n", yylineno, yytext); // exit(1);
 }
 
 {identifier} {

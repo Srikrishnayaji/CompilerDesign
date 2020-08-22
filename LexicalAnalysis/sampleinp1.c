@@ -11,7 +11,8 @@ int main() {
 	scanf("%d", &t);
 	while(t--) {
 		int n, k;
-		char* st = "samplestring";
+		char ab = a';
+		char* st = samplestring";
 		printf("%c", t);
 		scanf("%d %d", &n, &k);
 		if(n >= k) {
