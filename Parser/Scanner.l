@@ -229,96 +229,127 @@ operators {unary_operators}|{special_operators}|{logical_operators}|{relational_
 {keywords_1}|{keywords_2} {
     printf("%s is a keyword\n", yytext);
 	if(strcmp(yytext, "auto") == 0){
+		insert_symbolTable(yytext, "KEYWORD");
 		return(AUTO);
 	}
 	else if(strcmp(yytext, "double") == 0){
+		insert_symbolTable(yytext, "KEYWORD");
 		return(DOUBLE);
 	}
 	else if(strcmp(yytext, "int") == 0){
+		insert_symbolTable(yytext, "KEYWORD");
 		return(INT);
 	}
 	else if(strcmp(yytext, "struct") == 0){
+		insert_symbolTable(yytext, "KEYWORD");
 		return(STRUCT);
 	}
 	else if(strcmp(yytext, "break") == 0){
+		insert_symbolTable(yytext, "KEYWORD");
 		return(BREAK);
 	}
 	else if(strcmp(yytext, "else") == 0){
+		insert_symbolTable(yytext, "KEYWORD");
 		return(ELSE);
 	}
 	else if(strcmp(yytext, "long") == 0){
+		insert_symbolTable(yytext, "KEYWORD");
 		return(LONG);
 	}
 	else if(strcmp(yytext, "switch") == 0){
+		insert_symbolTable(yytext, "KEYWORD");
 		return(SWITCH);
 	}
 	else if(strcmp(yytext, "case") == 0){
+		insert_symbolTable(yytext, "KEYWORD");
 		return(CASE);
 	}
 	else if(strcmp(yytext, "enum") == 0){
+		insert_symbolTable(yytext, "KEYWORD");
 		return(ENUM);
 	}
 	else if(strcmp(yytext, "register") == 0){
+		insert_symbolTable(yytext, "KEYWORD");
 		return(REG);
 	}
 	else if(strcmp(yytext, "typedef") == 0){
+		insert_symbolTable(yytext, "KEYWORD");
 		return(TYPEDEF);
 	}
 	else if(strcmp(yytext, "char") == 0){
+		insert_symbolTable(yytext, "KEYWORD");
 		return(CHAR);
 	}
 	else if(strcmp(yytext, "extern") == 0){
+		insert_symbolTable(yytext, "KEYWORD");
 		return(EXTERN);
 	}
 	else if(strcmp(yytext, "return") == 0){
+		insert_symbolTable(yytext, "KEYWORD");
 		return(RETURN);
 	}
 	else if(strcmp(yytext, "union") == 0){
+		insert_symbolTable(yytext, "KEYWORD");
 		return(UNION);
 	}
 	else if(strcmp(yytext, "continue") == 0){
+		insert_symbolTable(yytext, "KEYWORD");
 		return(CONTINUE);
 	}
 	else if(strcmp(yytext, "for") == 0){
+		insert_symbolTable(yytext, "KEYWORD");
 		return(FOR);
 	}
 	else if(strcmp(yytext, "signed") == 0){
+		insert_symbolTable(yytext, "KEYWORD");
 		return(SIGNED);
 	}
 	else if(strcmp(yytext, "void") == 0){
+		insert_symbolTable(yytext, "KEYWORD");
 		return(VOID);
 	}
 	else if(strcmp(yytext, "do") == 0){
+		insert_symbolTable(yytext, "KEYWORD");
 		return(DO);
 	}
 	else if(strcmp(yytext, "if") == 0){
+		insert_symbolTable(yytext, "KEYWORD");
 		return(IF);
 	}
 	else if(strcmp(yytext, "static") == 0){
+		insert_symbolTable(yytext, "KEYWORD");
 		return(STATIC);
 	}
 	else if(strcmp(yytext, "while") == 0){
+		insert_symbolTable(yytext, "KEYWORD");
 		return(WHILE);
 	}
 	else if(strcmp(yytext, "default") == 0){
+		insert_symbolTable(yytext, "KEYWORD");
 		return(DEFAULT);
 	}
 	else if(strcmp(yytext, "goto") == 0){
+		insert_symbolTable(yytext, "KEYWORD");
 		return(GOTO);
 	}
 	else if(strcmp(yytext, "volatile") == 0){
+		insert_symbolTable(yytext, "KEYWORD");
 		return(VOLATILE);
 	}
 	else if(strcmp(yytext, "const") == 0){
+		insert_symbolTable(yytext, "KEYWORD");
 		return(CONST);
 	}
 	else if(strcmp(yytext, "float") == 0){
+		insert_symbolTable(yytext, "KEYWORD");
 		return(FLOAT);
 	}
 	else if(strcmp(yytext, "short") == 0){
+		insert_symbolTable(yytext, "KEYWORD");
 		return(SHORT);
 	}
 	else if(strcmp(yytext, "unsigned") == 0){
+		insert_symbolTable(yytext, "KEYWORD");
 		return(UNSIGNED);
 	}
     }
@@ -346,6 +377,7 @@ operators {unary_operators}|{special_operators}|{logical_operators}|{relational_
 	for(int i = 0; i < strlen(yytext); i++) {
         if(yytext[i] == '\n') yylineno++;
     }
+	insert_constantsTable(yytext, "NUMERICAL CONSTANT");
 	return(NUM_CONSTANT);
     }
 
@@ -355,6 +387,7 @@ operators {unary_operators}|{special_operators}|{logical_operators}|{relational_
 	for(int i = 0; i < strlen(yytext); i++) {
         if(yytext[i] == '\n') yylineno++;
     }
+	insert_constantsTable(yytext, "CHAR CONSTANT");
 	return(CHAR_CONSTANT);
     }
 
@@ -364,6 +397,7 @@ operators {unary_operators}|{special_operators}|{logical_operators}|{relational_
 	for(int i = 0; i < strlen(yytext); i++) {
         if(yytext[i] == '\n') yylineno++;
     }
+	insert_constantsTable(yytext, "STRING CONSTANT");
 	return(STRING_CONSTANT);
     }
 
