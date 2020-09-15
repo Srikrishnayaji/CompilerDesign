@@ -1,6 +1,7 @@
 %{
     #include<stdio.h>
     #include<string.h>
+	#include"y.tab.h"
 
     struct symbol_table {
         char type[100];
@@ -168,12 +169,50 @@
 			ct[pos].valid = strlen(str1);
 		}
 	}
+
+	void print_symbol_table()
+	{
+		printf("%10s | %15s | %10s | %10s | %10s\n","SYMBOL", "CLASS", "TYPE","VALUE", "LINE NO");
+		for(int i=0;i<81;i++) {
+			printf("-");
+		}
+		printf("\n");
+		for(int i = 0 ; i < 501 ; i++)
+		{
+			if(st[i].valid == 0)
+			{
+				continue;
+			}
+			printf("%10s | %15s | %10s | %10s | %10d\n",st[i].name, st[i].Class, st[i].type, st[i].value, st[i].line_number);
+		}
+    }
+
+	void print_constant_table()
+	{
+		printf("%10s | %15s\n","NAME", "TYPE");
+		for(int i=0;i<81;i++) {
+			printf("-");
+		}
+		printf("\n");
+		for(int i = 0 ; i < 501 ; i++)
+		{
+			if(ct[i].valid == 0)
+				continue;
+
+			printf("%10s | %15s\n",ct[i].name, ct[i].type);
+		}
+	}
+
     int cbracketsopen = 0;
     int cbracketsclose = 0;
     int bbracketsopen = 0;
     int bbracketsclose = 0;
     int fbracketsopen = 0;
     int fbracketsclose = 0;
+
+	char curid[20];
+	char curtype[20];
+	char curval[20];
 
 %}
 
@@ -401,27 +440,7 @@ operators {unary_operators}|{special_operators}|{logical_operators}|{relational_
 	return(STRING_CONSTANT);
     }
 
-{special_symbols} {
-    printf("%s is a special symbol\n", yytext);
-    if(yytext[0] == '{'){
-        fbracketsopen++;    
-    }
-    else if(yytext[0] == '}'){
-        fbracketsclose++;
-    }
-    else if(yytext[0] == '('){
-        cbracketsopen++;
-    }
-    else if(yytext[0] == ')'){
-        cbracketsclose++;
-    }
-    else if(yytext[0] == '['){
-        bbracketsopen++;
-    }
-    else if(yytext[0] == ']'){
-        bbracketsclose++;
-    }
-    }
+
 
 {unary_operators}|{special_operators}|{logical_operators}|{relational_operators}|{bitwise_operators}|{binary_operators}|{assignment_operators} {
     printf("%s is an operator\n", yytext);
@@ -461,56 +480,7 @@ operators {unary_operators}|{special_operators}|{logical_operators}|{relational_
 
 %%
 
-int main(int argc, char** argv){
-	if(argc < 2){
-		puts("ERROR: input file unavailable");
-		exit(1);
-	}
-    yyin = fopen(argv[1], "r");
 
-    int i,j;
-
-    for (j=0;j<500;j++)
-    {
-        st[j].valid = 0;
-        ct[j].valid = 0;
-    }
-
-    yylex();
-    if((bbracketsopen-bbracketsclose)){
-        printf("ERROR: brackets error [");
-        exit(1);
-    }
-    if((fbracketsopen-fbracketsclose)){
-        printf("ERROR: brackets error {");
-        exit(1);
-    }
-    if((cbracketsopen-cbracketsclose)){
-        printf("ERROR: brackets error (");
-        exit(1);
-    }
-    printf("\nSymbol Table\n");
-    for (i=0;i<500;i++)
-    {
-        if(st[i].valid)
-        {
-            printf("Name : %s \t", st[i].name);
-            printf("Type : %s \n", st[i].type);
-        }
-    }
-
-    printf("\nConstant Table\n");
-    for (int i=0;i<500;i++)
-    {
-        if(ct[i].valid)
-        {
-            printf("Name : %s \t", ct[i].name);
-            printf("Type : %s \n", ct[i].type);
-        }
-    }
-    fclose(yyin);
-    return (0);
-}
 
 int yywrap(){
     return(1);

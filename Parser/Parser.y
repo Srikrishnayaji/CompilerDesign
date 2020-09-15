@@ -27,10 +27,8 @@
 %token WHILE FOR DO 
 %token BREAK
 %token ENDIF
-%expect 2
+%token AUTO SWITCH CASE ENUM REG TYPEDEF EXTERN UNION CONTINUE STATIC DEFAULT GOTO VOLATILE CONST IDENTIFIER NUM_CONSTANT CHAR_CONSTANT STRING_CONSTANT
 
-%token identifier
-%token integer_constant string_constant float_constant character_constant
 
 %nonassoc ELSE
 
@@ -50,7 +48,7 @@
 %left lessthanAssignment lessthan greaterthanAssignment greaterthan
 %left leftshift rightshift 
 %left add subtract
-%left multiplication division modulo
+%left multiplication divide modulo
 
 %right SIZEOF
 %right negation not
@@ -87,7 +85,7 @@ V
 			| ;
 
 variable_declaration_identifier 
-			: identifier { ins(); } vdi;
+			: IDENTIFIER { ins(); } vdi;
 
 vdi : identifier_array_type | assignment expression ; 
 
@@ -96,7 +94,7 @@ identifier_array_type
 			| ;
 
 initilization_params
-			: integer_constant ']' initilization
+			: NUM_CONSTANT ']' initilization
 			| ']' string_initilization;
 
 initilization
@@ -125,19 +123,19 @@ short_grammar
 			: INT | ;
 
 structure_definition
-			: STRUCT identifier { ins(); } '{' V1  '}' ';';
+			: STRUCT IDENTIFIER { ins(); } '{' V1  '}' ';';
 
 V1 : variable_declaration V1 | ;
 
 structure_declaration 
-			: STRUCT identifier variable_declaration_list;
+			: STRUCT IDENTIFIER variable_declaration_list;
 
 
 function_declaration
 			: function_declaration_type function_declaration_param_statement;
 
 function_declaration_type
-			: type_specifier identifier '('  { ins();};
+			: type_specifier IDENTIFIER '('  { ins();};
 
 function_declaration_param_statement
 			: params ')' statement;
@@ -156,7 +154,7 @@ parameters_identifier_list_breakup
 			| ;
 
 param_identifier 
-			: identifier { ins(); } param_identifier_breakup;
+			: IDENTIFIER { ins(); } param_identifier_breakup;
 
 param_identifier_breakup
 			: '[' ']'
@@ -202,13 +200,13 @@ break_statement
 			: BREAK ';' ;
 
 string_initilization
-			: assignment string_constant { insV(); };
+			: assignment STRING_CONSTANT { insV(); };
 
 array_initialization
 			: assignment '{' array_int_declarations '}';
 
 array_int_declarations
-			: integer_constant array_int_declarations_breakup;
+			: NUM_CONSTANT array_int_declarations_breakup;
 
 array_int_declarations_breakup
 			: ',' array_int_declarations 
@@ -269,25 +267,25 @@ term
 			| factor ;
 
 MULOP 
-			: multiplication | division | modulo ;
+			: multiplication | divide | modulo ;
 
 factor 
 			: immutable | mutable ;
 
 mutable 
-			: identifier 
+			: IDENTIFIER 
 			| mutable mutable_breakup;
 
 mutable_breakup
 			: '[' expression ']' 
-			| '.' identifier;
+			| '.' IDENTIFIER;
 
 immutable 
 			: '(' expression ')' 
 			| call | constant;
 
 call
-			: identifier '(' arguments ')';
+			: IDENTIFIER '(' arguments ')';
 
 arguments 
 			: arguments_list | ;
@@ -300,10 +298,9 @@ A
 			| ;
 
 constant 
-			: integer_constant 	{ insV(); } 
-			| string_constant	{ insV(); } 
-			| float_constant	{ insV(); } 
-			| character_constant{ insV(); };
+			: NUM_CONSTANT 	{ insV(); } 
+			| STRING_CONSTANT	{ insV(); } 
+			| CHAR_CONSTANT{ insV(); };
 
 %%
 
@@ -313,6 +310,8 @@ extern char *yytext;
 void insert_symbol_table_type(char *,char *);
 void insert_symbol_table_value(char *, char *);
 void insert_constantsTable(char *, char *);
+void print_constant_table();
+void print_symbol_table();
 
 int main(int argc , char **argv)
 {
@@ -324,9 +323,10 @@ int main(int argc , char **argv)
 		printf(ANSI_COLOR_GREEN "Status: Parsing Complete - Valid" ANSI_COLOR_RESET "\n");
 		printf("%30s" ANSI_COLOR_CYAN "SYMBOL TABLE" ANSI_COLOR_RESET "\n", " ");
 		printf("%30s %s\n", " ", "------------");
-
+		print_symbol_table();
 		printf("\n\n%30s" ANSI_COLOR_CYAN "CONSTANT TABLE" ANSI_COLOR_RESET "\n", " ");
 		printf("%30s %s\n", " ", "--------------");
+		print_constant_table();
 	}
 }
 
@@ -345,9 +345,4 @@ void ins()
 void insV()
 {
 	insert_symbol_table_value(curid,curval);
-}
-
-int yywrap()
-{
-	return 1;
 }
