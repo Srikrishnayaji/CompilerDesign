@@ -124,7 +124,6 @@
 		{
 			if(strcmp(st[i].name,str1)==0)
 			{	
-				puts(str2);
 				strcpy(st[i].type,str2);
 			}
 		}
@@ -132,13 +131,6 @@
 
 	void insert_symbol_table_value(char *str1, char *str2)
 	{
-		puts("====================================================");
-		puts("Str1 is : ");
-		puts(str1);
-		puts("====== Str2 ============");
-		puts(str2);
-		puts("================Done===================");
-
 		for(int i = 0 ; i < 501 ; i++)
 		{
 			if(strcmp(st[i].name,str1)==0)
