@@ -18,6 +18,17 @@
         int valid;
     }ct[501];
 
+	void insert_symbol_table_line(char *str1, int line)
+	{
+		for(int i = 0 ; i < 501 ; i++)
+		{
+			if(strcmp(st[i].name,str1)==0)
+			{
+				st[i].line_number = line;
+			}
+		}
+	}
+
     int hash_function(char *str)
 	{
 		int value = 0;
@@ -84,8 +95,9 @@
 			if(st[value].valid == 0)
 			{
 				strcpy(st[value].name,str1);
-				strcpy(st[value].type,str2);
+				strcpy(st[value].Class, str2);
 				st[value].valid = strlen(str1);
+				insert_symbol_table_line(str1, yylineno);
 				return;
 			}
 
@@ -101,7 +113,7 @@
 			}
 
 			strcpy(st[pos].name,str1);
-			strcpy(st[pos].type,str2);
+			strcpy(st[pos].Class,str2);
 			st[pos].valid = strlen(str1);
 		}
 	}
@@ -111,7 +123,8 @@
 		for(int i = 0 ; i < 501 ; i++)
 		{
 			if(strcmp(st[i].name,str1)==0)
-			{
+			{	
+				puts(str2);
 				strcpy(st[i].type,str2);
 			}
 		}
@@ -119,6 +132,13 @@
 
 	void insert_symbol_table_value(char *str1, char *str2)
 	{
+		puts("====================================================");
+		puts("Str1 is : ");
+		puts(str1);
+		puts("====== Str2 ============");
+		puts(str2);
+		puts("================Done===================");
+
 		for(int i = 0 ; i < 501 ; i++)
 		{
 			if(strcmp(st[i].name,str1)==0)
@@ -128,16 +148,7 @@
 		}
 	}
 
-	void insert_symbol_table_line(char *str1, int line)
-	{
-		for(int i = 0 ; i < 501 ; i++)
-		{
-			if(strcmp(st[i].name,str1)==0)
-			{
-				st[i].line_number = line;
-			}
-		}
-	}
+	
 	void insert_constantsTable(char *str1, char *str2)
 	{
 		if(lookup_constantTable(str1))
@@ -268,18 +279,22 @@ operators {unary_operators}|{special_operators}|{logical_operators}|{relational_
 {keywords_1}|{keywords_2} {
     printf("%s is a keyword\n", yytext);
 	if(strcmp(yytext, "auto") == 0){
+		strcpy(curtype, yytext);
 		insert_symbolTable(yytext, "KEYWORD");
 		return(AUTO);
 	}
 	else if(strcmp(yytext, "double") == 0){
+		strcpy(curtype, yytext);
 		insert_symbolTable(yytext, "KEYWORD");
 		return(DOUBLE);
 	}
 	else if(strcmp(yytext, "int") == 0){
+		strcpy(curtype, yytext);
 		insert_symbolTable(yytext, "KEYWORD");
 		return(INT);
 	}
 	else if(strcmp(yytext, "struct") == 0){
+		strcpy(curtype, yytext);
 		insert_symbolTable(yytext, "KEYWORD");
 		return(STRUCT);
 	}
@@ -292,6 +307,7 @@ operators {unary_operators}|{special_operators}|{logical_operators}|{relational_
 		return(ELSE);
 	}
 	else if(strcmp(yytext, "long") == 0){
+		strcpy(curtype, yytext);
 		insert_symbolTable(yytext, "KEYWORD");
 		return(LONG);
 	}
@@ -308,6 +324,7 @@ operators {unary_operators}|{special_operators}|{logical_operators}|{relational_
 		return(ENUM);
 	}
 	else if(strcmp(yytext, "register") == 0){
+		strcpy(curtype, yytext);
 		insert_symbolTable(yytext, "KEYWORD");
 		return(REG);
 	}
@@ -316,10 +333,12 @@ operators {unary_operators}|{special_operators}|{logical_operators}|{relational_
 		return(TYPEDEF);
 	}
 	else if(strcmp(yytext, "char") == 0){
+		strcpy(curtype, yytext);
 		insert_symbolTable(yytext, "KEYWORD");
 		return(CHAR);
 	}
 	else if(strcmp(yytext, "extern") == 0){
+		strcpy(curtype, yytext);
 		insert_symbolTable(yytext, "KEYWORD");
 		return(EXTERN);
 	}
@@ -328,6 +347,7 @@ operators {unary_operators}|{special_operators}|{logical_operators}|{relational_
 		return(RETURN);
 	}
 	else if(strcmp(yytext, "union") == 0){
+		strcpy(curtype, yytext);
 		insert_symbolTable(yytext, "KEYWORD");
 		return(UNION);
 	}
@@ -340,10 +360,12 @@ operators {unary_operators}|{special_operators}|{logical_operators}|{relational_
 		return(FOR);
 	}
 	else if(strcmp(yytext, "signed") == 0){
+		strcpy(curtype, yytext);
 		insert_symbolTable(yytext, "KEYWORD");
 		return(SIGNED);
 	}
 	else if(strcmp(yytext, "void") == 0){
+		strcpy(curtype, yytext);
 		insert_symbolTable(yytext, "KEYWORD");
 		return(VOID);
 	}
@@ -406,13 +428,15 @@ operators {unary_operators}|{special_operators}|{logical_operators}|{relational_
 
 {identifier} {
     printf("%s is a identifier\n", yytext);
+	strcpy(curid, yytext);
 	insert_symbolTable(yytext, "Identifier");
 	return(IDENTIFIER);
 }
 
 {numerical_constants} {
     printf("%s is a constant\n", yytext);
-	insert_constantsTable(yytext, "Constant");
+	strcpy(curval, yytext);
+	// insert_constantsTable(yytext, "Constant");
 	for(int i = 0; i < strlen(yytext); i++) {
         if(yytext[i] == '\n') yylineno++;
     }
@@ -422,7 +446,8 @@ operators {unary_operators}|{special_operators}|{logical_operators}|{relational_
 
 {char_constants} {
     printf("%s is a constant\n", yytext);
-	insert_constantsTable(yytext, "Constant");
+	// insert_constantsTable(yytext, "Constant");
+	strcpy(curval, yytext);
 	for(int i = 0; i < strlen(yytext); i++) {
         if(yytext[i] == '\n') yylineno++;
     }
@@ -432,7 +457,8 @@ operators {unary_operators}|{special_operators}|{logical_operators}|{relational_
 
 {string_constants} {
     printf("%s is a constant\n", yytext);
-	insert_constantsTable(yytext, "Constant");
+	// insert_constantsTable(yytext, "Constant");
+	strcpy(curval, yytext);
 	for(int i = 0; i < strlen(yytext); i++) {
         if(yytext[i] == '\n') yylineno++;
     }
