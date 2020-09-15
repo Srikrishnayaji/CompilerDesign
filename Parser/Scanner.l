@@ -178,7 +178,7 @@
 %}
 
 identifier [a-zA-Z_][a-zA-Z0-9_]*
-numerical_constants [+-]?(([0-9]*\.[0-9]+)|([0-9]+\.[0-9]*)|([0-9]+))
+numerical_constants (([0-9]*\.[0-9]+)|([0-9]+\.[0-9]*)|([0-9]+))
 char_constants  [\t\n ]*((\'[a-zA-Z0-9]\')|\'\\a\'|\'\\b\'|\'\\e\'|'\\f\'|\'\\n\'|\'\\n\'|\'\\r\'|\'\\t\'|\'\\v\'|\'\\\'|\'\'\'|\'\"\'|\'\?\') 
 string_constants [\t\n ]*\"(.)*\"
 keywords_1 auto|double|int|struct|break|else|long|switch|case|enum|register|typedef|char|extern|return|union|continue|for|signed
@@ -213,6 +213,18 @@ operators {unary_operators}|{special_operators}|{logical_operators}|{relational_
     }
 }
 {header_files} {printf("%s is a header declaration\n", yytext);}
+
+
+";"				{ return(';'); }
+","				{ return(','); }
+("{")			{ return('{'); }
+("}")			{ return('}'); }
+"("				{ return('('); }
+")"				{ return(')'); }
+("["|"<:")		{ return('['); }
+("]"|":>") 		{ return(']'); }
+":"				{ return(':'); }
+"."
 
 {keywords_1}|{keywords_2} {
     printf("%s is a keyword\n", yytext);
@@ -379,6 +391,38 @@ operators {unary_operators}|{special_operators}|{logical_operators}|{relational_
 
 {unary_operators}|{special_operators}|{logical_operators}|{relational_operators}|{bitwise_operators}|{binary_operators}|{assignment_operators} {
     printf("%s is an operator\n", yytext);
+	if(strcmp(yytext, "++") == 0) return increment;
+	else if(strcmp(yytext, "--") == 0) return decrement;
+	else if(strcmp(yytext, "<<") == 0) return leftshift;
+	else if(strcmp(yytext, ">>") == 0) return rightshift;
+	else if(strcmp(yytext, "<=") == 0) return lessthanAssignment;
+	else if(strcmp(yytext, "<") == 0) return lessthan;
+	else if(strcmp(yytext, ">=") == 0) return greaterthanAssignment;
+	else if(strcmp(yytext, ">") == 0) return greaterthan;
+	else if(strcmp(yytext, "==") == 0) return equality;
+	else if(strcmp(yytext, "!=") == 0) return inequality;
+	else if(strcmp(yytext, "&&") == 0) return and;
+	else if(strcmp(yytext, "||") == 0) return or;
+	else if(strcmp(yytext, "^") == 0) return xor;
+	else if(strcmp(yytext, "*=") == 0) return multiplicationAssignment;
+	else if(strcmp(yytext, "/=") == 0) return divisionAssignment;
+	else if(strcmp(yytext, "%=") == 0) return moduloAssignment;
+	else if(strcmp(yytext, "+=") == 0) return additionAssignment;
+	else if(strcmp(yytext, "-=") == 0) return subtractionAssignment;
+	else if(strcmp(yytext, "<<=") == 0) return leftshiftAssignment;
+	else if(strcmp(yytext, ">>=") == 0) return rightshiftAssignment;
+	else if(strcmp(yytext, "&=") == 0) return andAssignment;
+	else if(strcmp(yytext, "|=") == 0) return orAssignment;
+	else if(strcmp(yytext, "&") == 0) return bitAnd;
+	else if(strcmp(yytext, "!") == 0) return not;
+	else if(strcmp(yytext, "~") == 0) return negation;
+	else if(strcmp(yytext, "|") == 0) return bitOr;
+	else if(strcmp(yytext, "-") == 0) return subtract;
+	else if(strcmp(yytext, "+") == 0) return add;
+	else if(strcmp(yytext, "*") == 0) return multiplication;
+	else if(strcmp(yytext, "/") == 0) return divide;
+	else if(strcmp(yytext, "%") == 0) return modulo;
+	else if(strcmp(yytext, "=") == 0) return assignment;  
     }
 
 %%
