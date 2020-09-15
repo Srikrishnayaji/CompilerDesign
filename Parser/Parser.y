@@ -310,11 +310,9 @@ constant
 extern FILE *yyin;
 extern int yylineno;
 extern char *yytext;
-void insertSTtype(char *,char *);
-void insertSTvalue(char *, char *);
-void incertCT(char *, char *);
-void printST();
-void printCT();
+void insert_symbol_table_type(char *,char *);
+void insert_symbol_table_value(char *, char *);
+void insert_constantsTable(char *, char *);
 
 int main(int argc , char **argv)
 {
@@ -326,11 +324,9 @@ int main(int argc , char **argv)
 		printf(ANSI_COLOR_GREEN "Status: Parsing Complete - Valid" ANSI_COLOR_RESET "\n");
 		printf("%30s" ANSI_COLOR_CYAN "SYMBOL TABLE" ANSI_COLOR_RESET "\n", " ");
 		printf("%30s %s\n", " ", "------------");
-		printST();
 
 		printf("\n\n%30s" ANSI_COLOR_CYAN "CONSTANT TABLE" ANSI_COLOR_RESET "\n", " ");
 		printf("%30s %s\n", " ", "--------------");
-		printCT();
 	}
 }
 
@@ -343,12 +339,12 @@ void yyerror(char *s)
 
 void ins()
 {
-	insertSTtype(curid,curtype);
+	insert_symbol_table_type(curid,curtype);
 }
 
 void insV()
 {
-	insertSTvalue(curid,curval);
+	insert_symbol_table_value(curid,curval);
 }
 
 int yywrap()
