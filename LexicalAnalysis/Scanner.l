@@ -286,10 +286,6 @@ operators {unary_operators}|{special_operators}|{logical_operators}|{relational_
     printf("In LineNo: %d, ERROR: Character usage error: %s\n", yylineno, yytext); // exit(1);
 }
 
-(\s|{identifier}|{numerical_constants}|{operators})*\' {
-    printf("In LineNo: %d, ERROR: Character usage error: %s\n", yylineno, yytext); // exit(1);
-}
-
 {identifier} {
     printf("%s is a identifier\n", yytext);
 	insert_symbolTable(yytext, "Identifier");
