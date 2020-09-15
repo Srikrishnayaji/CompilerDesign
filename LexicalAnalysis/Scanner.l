@@ -180,6 +180,99 @@ operators {unary_operators}|{special_operators}|{logical_operators}|{relational_
 
 {keywords_1}|{keywords_2} {
     printf("%s is a keyword\n", yytext);
+	if(strcmp(yytext, "auto") == 0){
+		return(AUTO);
+	}
+	else if(strcmp(yytext, "double") == 0){
+		return(DOUBLE);
+	}
+	else if(strcmp(yytext, "int") == 0){
+		return(INT);
+	}
+	else if(strcmp(yytext, "struct") == 0){
+		return(struct);
+	}
+	else if(strcmp(yytext, "break") == 0){
+		return(BREAK);
+	}
+	else if(strcmp(yytext, "else") == 0){
+		return(ELSE);
+	}
+	else if(strcmp(yytext, "long") == 0){
+		return(LONG);
+	}
+	else if(strcmp(yytext, "switch") == 0){
+		return(SWITCH);
+	}
+	else if(strcmp(yytext, "case") == 0){
+		return(CASE;
+	}
+	else if(strcmp(yytext, "enum") == 0){
+		return(ENUM);
+	}
+	else if(strcmp(yytext, "register") == 0){
+		return(REG);
+	}
+	else if(strcmp(yytext, "typedef") == 0){
+		return(TYPEDEF);
+	}
+	else if(strcmp(yytext, "char") == 0){
+		return(CHAR);
+	}
+	else if(strcmp(yytext, "extern") == 0){
+		return(EXTERN);
+	}
+	else if(strcmp(yytext, "return") == 0){
+		return(RETURN);
+	}
+	else if(strcmp(yytext, "union") == 0){
+		return(UNION);
+	}
+	else if(strcmp(yytext, "continue") == 0){
+		return(CONTINUE);
+	}
+	else if(strcmp(yytext, "for") == 0){
+		return(FOR);
+	}
+	else if(strcmp(yytext, "signed") == 0){
+		return(SIGNED);
+	}
+	else if(strcmp(yytext, "void") == 0){
+		return(VOID);
+	}
+	else if(strcmp(yytext, "do") == 0){
+		return(DO);
+	}
+	else if(strcmp(yytext, "if") == 0){
+		return(IF);
+	}
+	else if(strcmp(yytext, "static") == 0){
+		return(STATIC);
+	}
+	else if(strcmp(yytext, "while") == 0){
+		return(WHILE);
+	}
+	else if(strcmp(yytext, "default") == 0){
+		return(DEFAULT);
+	}
+	else if(strcmp(yytext, "goto") == 0){
+		return(GOTO);
+	}
+	else if(strcmp(yytext, "volatile") == 0){
+		return(VOLATILE);
+	}
+	else if(strcmp(yytext, "const") == 0){
+		return(CONST);
+	}
+	else if(strcmp(yytext, "float") == 0){
+		return(FLOAT);
+	}
+	else if(strcmp(yytext, "short") == 0){
+		return(SHORT);
+	}
+	else if(strcmp(yytext, "unsigned") == 0){
+		return(UNSIGNED);
+	}
     }
 
 ({numerical_constants}){identifier} {
@@ -200,15 +293,36 @@ operators {unary_operators}|{special_operators}|{logical_operators}|{relational_
 {identifier} {
     printf("%s is a identifier\n", yytext);
 	insert_symbolTable(yytext, "Identifier");
+	return(IDENTIFIER);
 }
 
-{constants} {
+{numerical_constants} {
     printf("%s is a constant\n", yytext);
 	insert_constantsTable(yytext, "Constant");
 	for(int i = 0; i < strlen(yytext); i++) {
         if(yytext[i] == '\n') yylineno++;
     }
+	return(NUM_CONSTANT);
     }
+
+{char_constants} {
+    printf("%s is a constant\n", yytext);
+	insert_constantsTable(yytext, "Constant");
+	for(int i = 0; i < strlen(yytext); i++) {
+        if(yytext[i] == '\n') yylineno++;
+    }
+	return(CHAR_CONSTANT);
+    }
+
+{string_constants} {
+    printf("%s is a constant\n", yytext);
+	insert_constantsTable(yytext, "Constant");
+	for(int i = 0; i < strlen(yytext); i++) {
+        if(yytext[i] == '\n') yylineno++;
+    }
+	return(STRING_CONSTANT);
+    }
+
 {special_symbols} {
     printf("%s is a special symbol\n", yytext);
     if(yytext[0] == '{'){

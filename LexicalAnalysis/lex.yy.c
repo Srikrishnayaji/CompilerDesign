@@ -351,8 +351,8 @@ static void yynoreturn yy_fatal_error ( const char* msg  );
 	(yy_hold_char) = *yy_cp; \
 	*yy_cp = '\0'; \
 	(yy_c_buf_p) = yy_cp;
-#define YY_NUM_RULES 15
-#define YY_END_OF_BUFFER 16
+#define YY_NUM_RULES 17
+#define YY_END_OF_BUFFER 18
 /* This struct is not used in this scanner,
    but its presence is necessary. */
 struct yy_trans_info
@@ -362,25 +362,25 @@ struct yy_trans_info
 	};
 static const flex_int16_t yy_accept[387] =
     {   0,
-        2,    2,   16,   15,    2,    1,   14,    8,    5,   14,
-       14,    2,   13,   14,   14,   14,   15,   14,   12,   14,
-       14,   14,   11,   14,   11,   11,   11,   11,   11,   11,
-       11,   11,   11,   11,   11,   11,   11,   11,   11,   14,
+        2,    2,   18,   17,    2,    1,   16,    8,    5,   16,
+       16,    2,   15,   16,   16,   16,   17,   16,   12,   16,
+       16,   16,   11,   16,   11,   11,   11,   11,   11,   11,
+       11,   11,   11,   11,   11,   11,   11,   11,   11,   16,
         2,    0,    2,    0,    0,    0,   10,    0,    0,    0,
-        0,    0,    0,    0,   14,    0,    0,    0,    0,    0,
-        0,    8,   12,    8,    8,    8,    8,    8,    0,    8,
-        8,    8,    8,    8,    8,    8,    8,    8,    5,   14,
-       14,    0,    2,    9,    0,    9,    9,    2,    9,    9,
+        0,    0,    0,    0,   16,    0,    0,    0,    0,    0,
+        0,    8,   14,    8,    8,    8,    8,    8,    0,    8,
+        8,    8,    8,    8,    8,    8,    8,    8,    5,   16,
+       16,    0,    2,    9,    0,    9,    9,    2,    9,    9,
         9,    0,    9,    9,    9,    9,    9,    0,    9,    0,
 
-        9,    9,    9,    9,   14,    0,   12,   14,   12,    0,
-        3,   12,    7,    7,   14,   14,   11,   11,   11,   11,
+        9,    9,    9,    9,   16,    0,   12,   16,   12,    0,
+        3,   12,    7,    7,   16,   16,   11,   11,   11,   11,
        11,   11,   11,   11,   11,    6,   11,   11,   11,   11,
        11,   11,    6,   11,   11,   11,   11,   11,   11,   11,
-       11,   11,   11,   11,   14,    0,    0,    0,    0,    0,
+       11,   11,   11,   11,   16,    0,    0,    0,    0,    0,
         0,    0,    0,    0,    0,    0,    0,    0,    0,    8,
         8,    8,    8,    8,    8,    8,    8,    8,    8,    8,
-        8,    8,    8,    9,    9,    9,   12,    9,    9,    2,
+        8,    8,    8,    9,    9,    9,   13,    9,    9,    2,
         9,    9,    9,    9,    9,    9,    9,    9,    9,    0,
         0,    0,    0,    0,    0,    0,    0,    9,    9,   12,
 
@@ -391,7 +391,7 @@ static const flex_int16_t yy_accept[387] =
         7,   11,   11,   11,   11,   11,   11,   11,   11,   11,
        11,   11,   11,    6,   11,   11,   11,   11,   11,   11,
        11,   11,   11,   11,   11,   11,   11,   11,   11,   11,
-        0,    0,    0,    8,    8,    8,    9,    9,   12,    9,
+        0,    0,    0,    8,    8,    8,    9,    9,   13,    9,
         0,    0,    0,    0,    4,    0,    0,    0,    0,    0,
         0,    0,    0,    0,    0,    0,    3,    3,    3,    3,
 
@@ -1324,18 +1324,111 @@ YY_RULE_SETUP
 #line 181 "Scanner.l"
 {
     printf("%s is a keyword\n", yytext);
+	if(strcmp(yytext, "auto") == 0){
+		return(AUTO);
+	}
+	else if(strcmp(yytext, "double") == 0){
+		return(DOUBLE);
+	}
+	else if(strcmp(yytext, "int") == 0){
+		return(INT);
+	}
+	else if(strcmp(yytext, "struct") == 0){
+		return(struct);
+	}
+	else if(strcmp(yytext, "break") == 0){
+		return(BREAK);
+	}
+	else if(strcmp(yytext, "else") == 0){
+		return(ELSE);
+	}
+	else if(strcmp(yytext, "long") == 0){
+		return(LONG);
+	}
+	else if(strcmp(yytext, "switch") == 0){
+		return(SWITCH);
+	}
+	else if(strcmp(yytext, "case") == 0){
+		return(CASE;
+	}
+	else if(strcmp(yytext, "enum") == 0){
+		return(ENUM);
+	}
+	else if(strcmp(yytext, "register") == 0){
+		return(REG);
+	}
+	else if(strcmp(yytext, "typedef") == 0){
+		return(TYPEDEF);
+	}
+	else if(strcmp(yytext, "char") == 0){
+		return(CHAR);
+	}
+	else if(strcmp(yytext, "extern") == 0){
+		return(EXTERN);
+	}
+	else if(strcmp(yytext, "return") == 0){
+		return(RETURN);
+	}
+	else if(strcmp(yytext, "union") == 0){
+		return(UNION);
+	}
+	else if(strcmp(yytext, "continue") == 0){
+		return(CONTINUE);
+	}
+	else if(strcmp(yytext, "for") == 0){
+		return(FOR);
+	}
+	else if(strcmp(yytext, "signed") == 0){
+		return(SIGNED);
+	}
+	else if(strcmp(yytext, "void") == 0){
+		return(VOID);
+	}
+	else if(strcmp(yytext, "do") == 0){
+		return(DO);
+	}
+	else if(strcmp(yytext, "if") == 0){
+		return(IF);
+	}
+	else if(strcmp(yytext, "static") == 0){
+		return(STATIC);
+	}
+	else if(strcmp(yytext, "while") == 0){
+		return(WHILE);
+	}
+	else if(strcmp(yytext, "default") == 0){
+		return(DEFAULT);
+	}
+	else if(strcmp(yytext, "goto") == 0){
+		return(GOTO);
+	}
+	else if(strcmp(yytext, "volatile") == 0){
+		return(VOLATILE);
+	}
+	else if(strcmp(yytext, "const") == 0){
+		return(CONST);
+	}
+	else if(strcmp(yytext, "float") == 0){
+		return(FLOAT);
+	}
+	else if(strcmp(yytext, "short") == 0){
+		return(SHORT);
+	}
+	else if(strcmp(yytext, "unsigned") == 0){
+		return(UNSIGNED);
+	}
     }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 185 "Scanner.l"
+#line 278 "Scanner.l"
 {
   printf("In LineNo: %d, ERROR: Invalid Identifier : %s\n", yylineno, yytext); // exit(1);
 }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 188 "Scanner.l"
+#line 281 "Scanner.l"
 {
     printf("In LineNo: %d, ERROR: String usage error in %s\n", yylineno, yytext); // exit(1);
 }
@@ -1343,41 +1436,68 @@ YY_RULE_SETUP
 case 9:
 /* rule 9 can match eol */
 YY_RULE_SETUP
-#line 192 "Scanner.l"
+#line 285 "Scanner.l"
 {
     printf("In LineNo: %d, ERROR: Character usage error: %s\n", yylineno, yytext); // exit(1);
 }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 196 "Scanner.l"
+#line 289 "Scanner.l"
 {
     printf("In LineNo: %d, ERROR: Character usage error: %s\n", yylineno, yytext); // exit(1);
 }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 200 "Scanner.l"
+#line 293 "Scanner.l"
 {
     printf("%s is a identifier\n", yytext);
 	insert_symbolTable(yytext, "Identifier");
+	return(IDENTIFIER);
 }
 	YY_BREAK
 case 12:
-/* rule 12 can match eol */
 YY_RULE_SETUP
-#line 205 "Scanner.l"
+#line 299 "Scanner.l"
 {
     printf("%s is a constant\n", yytext);
 	insert_constantsTable(yytext, "Constant");
 	for(int i = 0; i < strlen(yytext); i++) {
         if(yytext[i] == '\n') yylineno++;
     }
+	return(NUM_CONSTANT);
     }
 	YY_BREAK
 case 13:
+/* rule 13 can match eol */
 YY_RULE_SETUP
-#line 212 "Scanner.l"
+#line 308 "Scanner.l"
+{
+    printf("%s is a constant\n", yytext);
+	insert_constantsTable(yytext, "Constant");
+	for(int i = 0; i < strlen(yytext); i++) {
+        if(yytext[i] == '\n') yylineno++;
+    }
+	return(CHAR_CONSTANT);
+    }
+	YY_BREAK
+case 14:
+/* rule 14 can match eol */
+YY_RULE_SETUP
+#line 317 "Scanner.l"
+{
+    printf("%s is a constant\n", yytext);
+	insert_constantsTable(yytext, "Constant");
+	for(int i = 0; i < strlen(yytext); i++) {
+        if(yytext[i] == '\n') yylineno++;
+    }
+	return(STRING_CONSTANT);
+    }
+	YY_BREAK
+case 15:
+YY_RULE_SETUP
+#line 326 "Scanner.l"
 {
     printf("%s is a special symbol\n", yytext);
     if(yytext[0] == '{'){
@@ -1400,19 +1520,19 @@ YY_RULE_SETUP
     }
     }
 	YY_BREAK
-case 14:
+case 16:
 YY_RULE_SETUP
-#line 234 "Scanner.l"
+#line 348 "Scanner.l"
 {
     printf("%s is an operator\n", yytext);
     }
 	YY_BREAK
-case 15:
+case 17:
 YY_RULE_SETUP
-#line 238 "Scanner.l"
+#line 352 "Scanner.l"
 ECHO;
 	YY_BREAK
-#line 1416 "lex.yy.c"
+#line 1536 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2417,7 +2537,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 238 "Scanner.l"
+#line 352 "Scanner.l"
 
 
 int main(int argc, char** argv){
