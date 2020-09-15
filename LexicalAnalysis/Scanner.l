@@ -190,7 +190,7 @@ operators {unary_operators}|{special_operators}|{logical_operators}|{relational_
 		return(INT);
 	}
 	else if(strcmp(yytext, "struct") == 0){
-		return(struct);
+		return(STRUCT);
 	}
 	else if(strcmp(yytext, "break") == 0){
 		return(BREAK);
@@ -205,7 +205,7 @@ operators {unary_operators}|{special_operators}|{logical_operators}|{relational_
 		return(SWITCH);
 	}
 	else if(strcmp(yytext, "case") == 0){
-		return(CASE;
+		return(CASE);
 	}
 	else if(strcmp(yytext, "enum") == 0){
 		return(ENUM);
