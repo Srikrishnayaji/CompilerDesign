@@ -213,8 +213,8 @@
     int fbracketsopen = 0;
     int fbracketsclose = 0;
 
-	char curid[20];
-	char curtype[20];
+	char Match_str[20];
+	char Match_type[20];
 	char curval[20];
 
 %}
@@ -257,36 +257,28 @@ operators {unary_operators}|{special_operators}|{logical_operators}|{relational_
 {header_files} {printf("%s is a header declaration\n", yytext);}
 
 
-";"				{ return(';'); }
-","				{ return(','); }
-("{")			{ return('{'); }
-("}")			{ return('}'); }
-"("				{ return('('); }
-")"				{ return(')'); }
-("["|"<:")		{ return('['); }
-("]"|":>") 		{ return(']'); }
 ":"				{ return(':'); }
 "."
 
 {keywords_1}|{keywords_2} {
     printf("%s is a keyword\n", yytext);
 	if(strcmp(yytext, "auto") == 0){
-		strcpy(curtype, yytext);
+		strcpy(Match_type, yytext);
 		insert_symbolTable(yytext, "KEYWORD");
 		return(AUTO);
 	}
 	else if(strcmp(yytext, "double") == 0){
-		strcpy(curtype, yytext);
+		strcpy(Match_type, yytext);
 		insert_symbolTable(yytext, "KEYWORD");
 		return(DOUBLE);
 	}
 	else if(strcmp(yytext, "int") == 0){
-		strcpy(curtype, yytext);
+		strcpy(Match_type, yytext);
 		insert_symbolTable(yytext, "KEYWORD");
 		return(INT);
 	}
 	else if(strcmp(yytext, "struct") == 0){
-		strcpy(curtype, yytext);
+		strcpy(Match_type, yytext);
 		insert_symbolTable(yytext, "KEYWORD");
 		return(STRUCT);
 	}
@@ -299,7 +291,7 @@ operators {unary_operators}|{special_operators}|{logical_operators}|{relational_
 		return(ELSE);
 	}
 	else if(strcmp(yytext, "long") == 0){
-		strcpy(curtype, yytext);
+		strcpy(Match_type, yytext);
 		insert_symbolTable(yytext, "KEYWORD");
 		return(LONG);
 	}
@@ -316,7 +308,7 @@ operators {unary_operators}|{special_operators}|{logical_operators}|{relational_
 		return(ENUM);
 	}
 	else if(strcmp(yytext, "register") == 0){
-		strcpy(curtype, yytext);
+		strcpy(Match_type, yytext);
 		insert_symbolTable(yytext, "KEYWORD");
 		return(REG);
 	}
@@ -325,12 +317,12 @@ operators {unary_operators}|{special_operators}|{logical_operators}|{relational_
 		return(TYPEDEF);
 	}
 	else if(strcmp(yytext, "char") == 0){
-		strcpy(curtype, yytext);
+		strcpy(Match_type, yytext);
 		insert_symbolTable(yytext, "KEYWORD");
 		return(CHAR);
 	}
 	else if(strcmp(yytext, "extern") == 0){
-		strcpy(curtype, yytext);
+		strcpy(Match_type, yytext);
 		insert_symbolTable(yytext, "KEYWORD");
 		return(EXTERN);
 	}
@@ -339,7 +331,7 @@ operators {unary_operators}|{special_operators}|{logical_operators}|{relational_
 		return(RETURN);
 	}
 	else if(strcmp(yytext, "union") == 0){
-		strcpy(curtype, yytext);
+		strcpy(Match_type, yytext);
 		insert_symbolTable(yytext, "KEYWORD");
 		return(UNION);
 	}
@@ -352,12 +344,12 @@ operators {unary_operators}|{special_operators}|{logical_operators}|{relational_
 		return(FOR);
 	}
 	else if(strcmp(yytext, "signed") == 0){
-		strcpy(curtype, yytext);
+		strcpy(Match_type, yytext);
 		insert_symbolTable(yytext, "KEYWORD");
 		return(SIGNED);
 	}
 	else if(strcmp(yytext, "void") == 0){
-		strcpy(curtype, yytext);
+		strcpy(Match_type, yytext);
 		insert_symbolTable(yytext, "KEYWORD");
 		return(VOID);
 	}
@@ -408,19 +400,19 @@ operators {unary_operators}|{special_operators}|{logical_operators}|{relational_
     }
 
 ({numerical_constants}){identifier} {
-  printf("In LineNo: %d, ERROR: Invalid Identifier : %s\n", yylineno, yytext); // exit(1);
+  printf("In LineNo: %d, ERROR: Invalid Identifier : %s\n", yylineno, yytext);  exit(1);
 }
 (\")(\s|{identifier}|{numerical_constants}|{operators})* {
-    printf("In LineNo: %d, ERROR: String usage error in %s\n", yylineno, yytext); // exit(1);
+    printf("In LineNo: %d, ERROR: String usage error in %s\n", yylineno, yytext);  exit(1);
 }
 
 [\n\t ]*\'(\s|{identifier}|{numerical_constants}|{operators})* {
-    printf("In LineNo: %d, ERROR: Character usage error: %s\n", yylineno, yytext); // exit(1);
+    printf("In LineNo: %d, ERROR: Character usage error: %s\n", yylineno, yytext);  exit(1);
 }
 
 {identifier} {
     printf("%s is a identifier\n", yytext);
-	strcpy(curid, yytext);
+	strcpy(Match_str, yytext);
 	insert_symbolTable(yytext, "Identifier");
 	return(IDENTIFIER);
 }
@@ -458,6 +450,39 @@ operators {unary_operators}|{special_operators}|{logical_operators}|{relational_
 	return(STRING_CONSTANT);
     }
 
+
+{special_symbols} {
+    printf("%s is a special symbol\n", yytext);
+	
+	if(yytext[0] == ';') { return(';'); }
+	else
+	if(yytext[0] == ',') { return(','); }
+	else	
+    if(yytext[0] == '{'){
+        fbracketsopen++;   
+		return('{'); 
+    }
+    else if(yytext[0] == '}'){
+        fbracketsclose++;
+		return('}');
+    }
+    else if(yytext[0] == '('){
+        cbracketsopen++;
+		return('(');
+    }
+    else if(yytext[0] == ')'){
+        cbracketsclose++;
+		 return(')');
+    }
+    else if(yytext[0] == '['){
+        bbracketsopen++;
+		return('[');
+    }
+    else if(yytext[0] == ']'){
+        bbracketsclose++;
+		return(']'); 
+    }
+    }
 
 
 {unary_operators}|{special_operators}|{logical_operators}|{relational_operators}|{bitwise_operators}|{binary_operators}|{assignment_operators} {

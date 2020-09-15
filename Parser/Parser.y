@@ -8,8 +8,8 @@
 	void insV();
 	int flag=0;
 
-	extern char curid[20];
-	extern char curtype[20];
+	extern char Match_str[20];
+	extern char Match_type[20];
 	extern char curval[20];
 
 %}
@@ -301,6 +301,12 @@ constant
 extern FILE *yyin;
 extern int yylineno;
 extern char *yytext;
+extern int cbracketsopen;
+extern int cbracketsclose;
+extern int bbracketsopen;
+extern int bbracketsclose;
+extern int fbracketsopen;
+extern int fbracketsclose;
 void insert_symbol_table_type(char *,char *);
 void insert_symbol_table_value(char *, char *);
 void insert_constantsTable(char *, char *);
@@ -311,14 +317,27 @@ int main(int argc , char **argv)
 {
 	yyin = fopen(argv[1], "r");
 	yyparse();
+	if((bbracketsopen-bbracketsclose)){
+        printf("ERROR: brackets error [");
+		flag = 1;
+    }
+    if((fbracketsopen-fbracketsclose)){
+        printf("ERROR: brackets error {");
+		flag = 1;
+    }
+    if((cbracketsopen-cbracketsclose)){
+        printf("ERROR: brackets error (");
+		flag = 1;
+    }
+
 
 	if(flag == 0)
 	{
 		printf("Status: Parsing Complete - Valid\n");
-		printf("%30sSYMBOL TABLE\n");
+		printf("SYMBOL TABLE\n");
 		printf("%30s %s\n", " ", "------------");
 		print_symbol_table();
-		printf("\n\n%30sCONSTANT TABLE\n");
+		printf("\n\nCONSTANT TABLE\n");
 		printf("%30s %s\n", " ", "--------------");
 		print_constant_table();
 	}
@@ -326,17 +345,18 @@ int main(int argc , char **argv)
 
 void yyerror(char *s)
 {
-	printf("%d %s %s\n", yylineno, s, yytext);
+	puts("=========================================================================");
+	printf("Parsing Failed at line no: %d\n", yylineno);
+	printf("Error: %s\n", yytext);
 	flag=1;
-	printf("Status: Parsing Failed - Invalid\n");
 }
 
 void ins()
 {
-	insert_symbol_table_type(curid,curtype);
+	insert_symbol_table_type(Match_str,Match_type);
 }
 
 void insV()
 {
-	insert_symbol_table_value(curid,curval);
+	insert_symbol_table_value(Match_str,curval);
 }
