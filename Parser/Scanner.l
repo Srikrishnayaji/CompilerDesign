@@ -5,14 +5,17 @@
     struct symbol_table {
         char type[100];
         char name[100];
+		char Class[100];
+		char value[100];
+		int line_number;
         int valid;
-    }st[500];
+    }st[501];
 
     struct constant_table {
         char type[100];
         char name[100];
         int valid;
-    }ct[500];
+    }ct[501];
 
     int hash_function(char *str)
 	{
@@ -99,6 +102,39 @@
 			strcpy(st[pos].name,str1);
 			strcpy(st[pos].type,str2);
 			st[pos].valid = strlen(str1);
+		}
+	}
+
+	void insert_symbol_table_type(char *str1, char *str2)
+	{
+		for(int i = 0 ; i < 501 ; i++)
+		{
+			if(strcmp(st[i].name,str1)==0)
+			{
+				strcpy(st[i].type,str2);
+			}
+		}
+    }
+
+	void insert_symbol_table_value(char *str1, char *str2)
+	{
+		for(int i = 0 ; i < 501 ; i++)
+		{
+			if(strcmp(st[i].name,str1)==0)
+			{
+				strcpy(st[i].value,str2);
+			}
+		}
+	}
+
+	void insert_symbol_table_line(char *str1, int line)
+	{
+		for(int i = 0 ; i < 501 ; i++)
+		{
+			if(strcmp(st[i].name,str1)==0)
+			{
+				st[i].line_number = line;
+			}
 		}
 	}
 	void insert_constantsTable(char *str1, char *str2)
