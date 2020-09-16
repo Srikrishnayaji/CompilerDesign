@@ -4,7 +4,7 @@
     @snkr2000
     @shashank68
     @Srikrishnayaji
-    @tarunanur
+    @TarunAnur
 
 ## Requirements
 
