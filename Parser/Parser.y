@@ -318,18 +318,18 @@ int main(int argc , char **argv)
 	yyin = fopen(argv[1], "r");
 	yyparse();
 	if((bbracketsopen-bbracketsclose)){
-        // printf("ERROR: brackets error [\n");
-		yyerror("ERROR: brackets error [\n");
+        printf("ERROR: brackets error [\n");
+		// yyerror("ERROR: brackets error [\n");
 		flag = 1;
     }
     if((fbracketsopen-fbracketsclose)){
-        // printf("ERROR: brackets error {\n");
-		yyerror("ERROR: brackets error {\n");
+        printf("ERROR: brackets error {\n");
+		// yyerror("ERROR: brackets error {\n");
 		flag = 1;
     }
     if((cbracketsopen-cbracketsclose)){
-        // printf("ERROR: brackets error (\n");
-		yyerror("ERROR: brackets error (\n");
+        printf("ERROR: brackets error (\n");
+		// yyerror("ERROR: brackets error (\n");
 		flag = 1;
     }
 
