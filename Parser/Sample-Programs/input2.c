@@ -2,7 +2,7 @@
 #include<stdlib.h>
 void main()
 {
-    int n = 10;
+    int n = 0;
     if(n % 2 == 0)
     {
         printf("EVEN NUMBER\n");
