@@ -1,8 +1,8 @@
 #include<stdio.h>
+#include<stdlib.h>
 
 void func(int a, int b, int c) {
     char fasd;
-    int a = 5;
 }
 
 void func2(int a, int b) {
@@ -10,7 +10,6 @@ void func2(int a, int b) {
 }
 
 int main(int argc) {
-    int b = 5;
-    func(5, 5, 5);    
-    char b;
+    int a= 5 - 2;
+    int arr[-1];
 }

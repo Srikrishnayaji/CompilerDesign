@@ -116,7 +116,8 @@ identifier_array_type
 			| ;
 
 initilization_params
-			: NUM_CONSTANT ']' initilization
+			: subtract NUM_CONSTANT ']' initilization {puts("ERROR: Array size negative!!");}
+			| NUM_CONSTANT {if(atoi(curval) == 0) {puts("ERROR: Array Size <= 0!!");}} ']' initilization
 			| ']' string_initilization;
 
 initilization
