@@ -6,11 +6,13 @@
 	#include "string.h"
 	void ins();
 	void insV();
+	char get_identifier_type(char*);
 	int flag=0;
 
 	extern char Match_str[20];
 	extern char Match_type[20];
 	extern char curval[20];
+	extern char cur_identifier[20];
 
 %}
 
@@ -68,20 +70,41 @@ declaration
 			| structure_definition;
 
 variable_declaration
-			: type_specifier variable_declaration_list ';' 
+			: type_specifier variable_declaration_list ';' {
+				if($1 != $2) {
+					puts("variable_declaration mismatch");
+				}
+			}
 			| structure_declaration;
 
 variable_declaration_list
-			: variable_declaration_identifier V;
+			: variable_declaration_identifier V ;
 
 V
-			: ',' variable_declaration_list 
+			: ',' variable_declaration_list {
+				$$ = $2;
+			}
 			| ;
 
 variable_declaration_identifier 
-			: IDENTIFIER { ins(); } vdi;
+			: IDENTIFIER {ins();} vdi {
+				char type = get_identifier_type(cur_identifier);
+				puts(cur_identifier);
+				printf("Type: %c\n", type);
+				printf("%d ->___$2\n", $3);
+				if(type == 'i' && $3 == 5) $$ = 5;
+				else if(type == 'c' && $3 == 6) $$ = 6;
+				else {
+					puts("ERROR_MISMATCH DECL ");
+				}
+			};
 
-vdi : identifier_array_type | assignment expression ; 
+vdi : identifier_array_type | assignment expression {
+	printf("EXP__GIVES %d\n", $2);
+	$$ = $2;
+	printf("$$ is___%d\n", $$);
+	
+}; 
 
 identifier_array_type
 			: '[' initilization_params
@@ -97,7 +120,7 @@ initilization
 			| ;
 
 type_specifier 
-			: INT | CHAR | FLOAT | DOUBLE 
+			: INT {$$ = 5;}| CHAR {$$ = 6;}| FLOAT {$$ = 5;}| DOUBLE 
 			| LONG long_grammar 
 			| SHORT short_grammar
 			| UNSIGNED unsigned_grammar 
@@ -207,27 +230,54 @@ array_int_declarations_breakup
 			| ;
 
 expression 
-			: mutable expression_breakup
-			| simple_expression ;
+			: mutable expression_breakup {
+				if($1 != $2) {
+					printf("EXPR___mismatch\n");
+				} else if($1 == 5) {
+					$$ = 5;
+				} else if($1 == 6) {
+					$$ = 6;
+				}
+			}
+			| simple_expression {
+				puts("MATCHING HERE");
+				$$ = $1;
+			};
 
 expression_breakup
-			: assignment expression 
-			| additionAssignment expression 
-			| subtractionAssignment expression 
-			| multiplicationAssignment expression 
-			| divisionAssignment expression 
-			| moduloAssignment expression 
+			: assignment expression {
+				$$ = $2;
+			}
+			| additionAssignment expression {
+				$$ = $2;
+			}
+			| subtractionAssignment expression {
+				$$ = $2;
+			}
+			| multiplicationAssignment expression {
+				$$ = $2;
+			}
+			| divisionAssignment expression {
+				$$ = $2;
+			}
+			| moduloAssignment expression {
+				$$ = $2;
+			}
 			| increment 
 			| decrement ;
 
 simple_expression 
-			: and_expression simple_expression_breakup;
+			: and_expression simple_expression_breakup {
+				$$ = $1;
+			};
 
 simple_expression_breakup 
 			: or and_expression simple_expression_breakup | ;
 
 and_expression 
-			: unary_relation_expression and_expression_breakup;
+			: unary_relation_expression and_expression_breakup {
+				$$ = $1;
+			};
 
 and_expression_breakup
 			: and unary_relation_expression and_expression_breakup
@@ -235,13 +285,19 @@ and_expression_breakup
 
 unary_relation_expression 
 			: not unary_relation_expression 
-			| regular_expression ;
+			| regular_expression {
+				$$ = $1;
+			};
 
 regular_expression 
-			: sum_expression regular_expression_breakup;
+			: sum_expression regular_expression_breakup {
+				$$ = $1;
+			};
 
 regular_expression_breakup
-			: relational_operators sum_expression 
+			: relational_operators sum_expression {
+				$$ = $2;
+			}
 			| ;
 
 relational_operators 
@@ -249,37 +305,73 @@ relational_operators
 			| lessthan | equality | inequality ;
 
 sum_expression 
-			: sum_expression sum_operators term 
-			| term ;
-
+			: sum_expression sum_operators term {
+				if($1 == 5 && $3 == 5)
+					$$ = 5;
+				else 
+					printf("Type mismatch");
+			}
+			| term {$$ = $1;};
+// 
 sum_operators 
 			: add 
 			| subtract ;
 
 term
-			: term MULOP factor 
-			| factor ;
+			: term MULOP factor {
+				if($1 == $3)
+					$$ = $1;
+				else 
+					{
+						printf("Type mismatch");
+					};
+			} 
+			| factor {$$ = $1;};
 
 MULOP 
 			: multiplication | divide | modulo ;
 
 factor 
-			: immutable | mutable ;
+			: immutable {$$ = $1;}| mutable ;
 
 mutable 
-			: IDENTIFIER 
-			| mutable mutable_breakup;
+			: IDENTIFIER {
+				// check identifire type and return;
+				char type = get_identifier_type(cur_identifier);
+				if(type == 'i') $$ = 5;
+				if(type == 'c') $$ = 6;
+			}
+			| mutable mutable_breakup {
+				if($2 == 5 || $1 == 5) 
+					$$ = 5;
+				else 
+					printf("EERROR");
+			};
 
 mutable_breakup
 			: '[' expression ']' 
-			| '.' IDENTIFIER;
+			| '.' IDENTIFIER {if( $2 == 5) $$ = 5;};
 
 immutable 
-			: '(' expression ')' 
-			| call | constant;
+			: '(' expression ')' {
+				if($2 == 5) $$ = 5;
+			}
+			| call {
+				if($1 == 5) $$ = 5;
+			}
+			| constant {
+				if($1 == 5) $$ = 5;
+			};
 
 call
-			: IDENTIFIER '(' arguments ')';
+			: IDENTIFIER '(' arguments ')' {
+				puts(cur_identifier);
+				char type = get_identifier_type(cur_identifier);
+				if(type == 'i') $$ = 5;
+				if(type == 'c') $$ = 6;
+				// if($1 == 5) $$ = 5;
+				printf("%d", $1);
+			};
 
 arguments 
 			: arguments_list | ;
@@ -292,9 +384,9 @@ A
 			| ;
 
 constant 
-			: NUM_CONSTANT 	{ insV(); } 
+			: NUM_CONSTANT 	{ insV(); $$=5;} 
 			| STRING_CONSTANT	{ insV(); } 
-			| CHAR_CONSTANT{ insV(); };
+			| CHAR_CONSTANT{ insV(); $$=6;};
 
 %%
 
@@ -345,6 +437,7 @@ int main(int argc , char **argv)
 		print_constant_table();
 	}
 }
+
 
 void yyerror(char *s)
 {

@@ -18,6 +18,15 @@
         int valid;
     }ct[501];
 
+	char get_identifier_type(char* matchstr) {
+		for(int i = 0; i < 501; i++) {
+			if(strcmp(st[i].name, matchstr) == 0) {
+				puts(st[i].type);				
+				return st[i].type[0];
+			}
+		}
+	}
+
 	void insert_symbol_table_line(char *str1, int line)
 	{
 		for(int i = 0 ; i < 501 ; i++)
@@ -216,6 +225,7 @@
 	char Match_str[20];
 	char Match_type[20];
 	char curval[20];
+	char cur_identifier[20];
 
 %}
 
@@ -413,6 +423,7 @@ operators {unary_operators}|{special_operators}|{logical_operators}|{relational_
 {identifier} {
     printf("%s is a identifier\n", yytext);
 	strcpy(Match_str, yytext);
+	strcpy(cur_identifier, yytext);
 	insert_symbolTable(yytext, "Identifier");
 	return(IDENTIFIER);
 }
