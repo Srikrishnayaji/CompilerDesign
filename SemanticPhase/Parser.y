@@ -13,7 +13,14 @@
 	extern char Match_type[20];
 	extern char curval[20];
 	extern char cur_identifier[20];
-
+	extern char cur_function[20];
+	extern int cur_scope;
+	extern int params_cnt;
+	extern int funccall_params_cnt;
+	void insert_symbol_table_scope(char*, int);
+	void insert_symbol_table_params_cnt(char*, int);
+	void remove_scope(int);
+	int verify_funccall_cnt(char*, int);
 %}
 
 %nonassoc IF
@@ -87,19 +94,17 @@ V
 			| ;
 
 variable_declaration_identifier 
-			: IDENTIFIER {ins();} vdi {
+			: IDENTIFIER {ins(), insert_symbol_table_scope(cur_identifier, cur_scope);} vdi {
 				char type = get_identifier_type(cur_identifier);
-				puts(cur_identifier);
-				printf("Type: %c\n", type);
 				printf("%d ->___$2\n", $3);
 				if(type == 'i' && $3 == 5) $$ = 5;
 				else if(type == 'c' && $3 == 6) $$ = 6;
-				else {
+				else if($3 != 127) {
 					puts("ERROR_MISMATCH DECL ");
 				}
 			};
 
-vdi : identifier_array_type | assignment expression {
+vdi : identifier_array_type {$$ = 127;} | assignment expression {
 	printf("EXP__GIVES %d\n", $2);
 	$$ = $2;
 	printf("$$ is___%d\n", $$);
@@ -152,7 +157,7 @@ function_declaration
 			: function_declaration_type function_declaration_param_statement;
 
 function_declaration_type
-			: type_specifier IDENTIFIER '('  { ins();};
+			: type_specifier IDENTIFIER '('  { params_cnt = 0; ins(); strcpy(cur_function, cur_identifier); insert_symbol_table_scope(cur_identifier, cur_scope);};
 
 function_declaration_param_statement
 			: params ')' statement;
@@ -161,7 +166,7 @@ params
 			: parameters_list | ;
 
 parameters_list 
-			: type_specifier parameters_identifier_list;
+			: type_specifier parameters_identifier_list {insert_symbol_table_params_cnt(cur_function, params_cnt);};
 
 parameters_identifier_list 
 			: param_identifier parameters_identifier_list_breakup;
@@ -171,7 +176,7 @@ parameters_identifier_list_breakup
 			| ;
 
 param_identifier 
-			: IDENTIFIER { ins(); } param_identifier_breakup;
+			: IDENTIFIER { ins(); insert_symbol_table_scope(cur_identifier, cur_scope+1); params_cnt++;} param_identifier_breakup;
 
 param_identifier_breakup
 			: '[' ']'
@@ -184,7 +189,7 @@ statement
 			| variable_declaration;
 
 compound_statement 
-			: '{' statment_list '}' ;
+			: {cur_scope++;} '{' statment_list '}' {remove_scope(cur_scope); cur_scope--;};
 
 statment_list 
 			: statement statment_list 
@@ -364,23 +369,25 @@ immutable
 			};
 
 call
-			: IDENTIFIER '(' arguments ')' {
+			: IDENTIFIER '(' {strcpy(cur_function, cur_identifier);} arguments ')' {
 				puts(cur_identifier);
-				char type = get_identifier_type(cur_identifier);
+				char type = get_identifier_type(cur_function);
 				if(type == 'i') $$ = 5;
 				if(type == 'c') $$ = 6;
-				// if($1 == 5) $$ = 5;
-				printf("%d", $1);
+
+				if(!verify_funccall_cnt(cur_function, funccall_params_cnt)) {
+					puts("ERROR: ____FUnction Call argumetns mismatch");
+				}
 			};
 
 arguments 
 			: arguments_list | ;
 
 arguments_list 
-			: expression A;
+			: {funccall_params_cnt = 0;} expression {funccall_params_cnt++;} A;
 
 A
-			: ',' expression A 
+			: ',' expression {funccall_params_cnt++;} A 
 			| ;
 
 constant 
@@ -455,4 +462,4 @@ void ins()
 void insV()
 {
 	insert_symbol_table_value(Match_str,curval);
-}
+}	

@@ -1,9 +1,16 @@
 #include<stdio.h>
 
-int func() {
-    return 5;
+void func(int a, int b, int c) {
+    char fasd;
+    int a = 5;
 }
 
-int main() {
-   int a = 5 + func(); 
+void func2(int a, int b) {
+    int dfa;
+}
+
+int main(int argc) {
+    int b = 5;
+    func(5, 5, 5);    
+    char b;
 }

@@ -2,6 +2,10 @@
     #include<stdio.h>
     #include<string.h>
 	#include"y.tab.h"
+	const int INT_MAX = 1 << 30;
+	int cur_scope;
+	int params_cnt;
+	int funccall_params_cnt;
 
     struct symbol_table {
         char type[100];
@@ -10,6 +14,8 @@
 		char value[100];
 		int line_number;
         int valid;
+		int scope;
+		int param_cnt;
     }st[501];
 
     struct constant_table {
@@ -59,7 +65,7 @@
 		}
 		else if(strcmp(st[value].name,str)==0)
 		{
-			return 1;
+			return value;
 		}
 		else
 		{
@@ -67,7 +73,7 @@
 	    	{
 	    		if(strcmp(st[i].name,str)==0)
 	    		{
-	    			return 1;
+	    			return i;
 	    		}
 	    	}
 	    	return 0;
@@ -106,6 +112,7 @@
 				strcpy(st[value].name,str1);
 				strcpy(st[value].Class, str2);
 				st[value].valid = strlen(str1);
+				st[value].scope = INT_MAX;
 				insert_symbol_table_line(str1, yylineno);
 				return;
 			}
@@ -124,9 +131,62 @@
 			strcpy(st[pos].name,str1);
 			strcpy(st[pos].Class,str2);
 			st[pos].valid = strlen(str1);
+			st[pos].scope = INT_MAX;
 		}
 	}
 
+	void insert_symbol_table_scope(char* str, int scope) {
+		int pos = lookup_symbolTable(str);
+
+		if(pos && st[pos].scope != INT_MAX) {
+			int val = hash_function(str);
+
+			for(int i = val, loopCnt = 0; loopCnt < 502; i = (i + 1) % 501, loopCnt++) {
+				
+				if(st[i].valid == 1) {
+					if(st[i].scope == scope && strcmp(str, st[i].name) == 0) {
+						puts("ERROR: DUPLICATE declaration=============");
+						return;
+					}
+				}
+			}
+			for(int i = val + 1; i != val; i = (i + 1) % 501) {
+				if(st[i].valid == 0) {
+					strcpy(st[i].name,str);
+					strcpy(st[i].Class, str);
+					st[i].valid = strlen(str);
+					st[i].scope = scope;
+					st[i].line_number = yylineno;
+					return;
+				}
+			}
+		} else {
+			for(int i = 0; i < 501; i++) {
+				if(strcmp(st[i].name, str) == 0) {
+					st[i].scope = scope;
+					return;
+				}
+			}
+		}
+	}
+	int remove_scope(int scope) {
+		for(int i = 0; i < 501; i++) {
+			if(st[i].valid && st[i].scope == scope) {
+				printf("SCOPE: +++ %d\n", scope);
+				puts(st[i].name);
+				st[i].scope = INT_MAX;
+			}
+		}
+	}
+
+	void insert_symbol_table_params_cnt(char* str, int param_count) {
+		int pos = lookup_symbolTable(str);
+		st[pos].param_cnt = param_count;
+	}
+	int verify_funccall_cnt(char* str, int cnt) { 
+		int pos = lookup_symbolTable(str);
+		return st[pos].param_cnt == cnt;
+	}
 	void insert_symbol_table_type(char *str1, char *str2)
 	{
 		for(int i = 0 ; i < 501 ; i++)
@@ -184,7 +244,7 @@
 
 	void print_symbol_table()
 	{
-		printf("%10s | %15s | %10s | %10s | %10s\n","SYMBOL", "CLASS", "TYPE","VALUE", "LINE NO");
+		printf("%10s | %15s | %10s | %10s | %10s | %10s | %10s \n","SYMBOL", "CLASS", "TYPE","VALUE", "LINE NO", "SCOPE", "PARAM_CNT");
 		for(int i=0;i<81;i++) {
 			printf("-");
 		}
@@ -195,7 +255,7 @@
 			{
 				continue;
 			}
-			printf("%10s | %15s | %10s | %10s | %10d\n",st[i].name, st[i].Class, st[i].type, st[i].value, st[i].line_number);
+			printf("%10s | %15s | %10s | %10s | %10d | %10d | %10d \n",st[i].name, st[i].Class, st[i].type, st[i].value, st[i].line_number, st[i].scope, st[i].param_cnt);
 		}
     }
 
@@ -226,6 +286,7 @@
 	char Match_type[20];
 	char curval[20];
 	char cur_identifier[20];
+	char cur_function[20];
 
 %}
 
