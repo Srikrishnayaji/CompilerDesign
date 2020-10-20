@@ -21,6 +21,9 @@
 	void insert_symbol_table_params_cnt(char*, int);
 	void remove_scope(int);
 	int verify_funccall_cnt(char*, int);
+	int check_arg_type(int , char* , int);
+	void insert_arg_type(char*, char*, int);
+	void insert_func_table(char* );
 %}
 
 %nonassoc IF
@@ -158,7 +161,7 @@ function_declaration
 			: function_declaration_type function_declaration_param_statement;
 
 function_declaration_type
-			: type_specifier IDENTIFIER '('  { params_cnt = 0; ins(); strcpy(cur_function, cur_identifier); insert_symbol_table_scope(cur_identifier, cur_scope);};
+			: type_specifier IDENTIFIER '('  { params_cnt = 0; ins(); strcpy(cur_function, cur_identifier); insert_symbol_table_scope(cur_identifier, cur_scope); insert_func_table(cur_function);};
 
 function_declaration_param_statement
 			: params ')' statement;
@@ -167,7 +170,7 @@ params
 			: parameters_list | ;
 
 parameters_list 
-			: type_specifier parameters_identifier_list {insert_symbol_table_params_cnt(cur_function, params_cnt);};
+			: type_specifier {insert_arg_type(Match_type, cur_function, params_cnt);} parameters_identifier_list {insert_symbol_table_params_cnt(cur_function, params_cnt);};
 
 parameters_identifier_list 
 			: param_identifier parameters_identifier_list_breakup;
@@ -385,10 +388,10 @@ arguments
 			: arguments_list | ;
 
 arguments_list 
-			: {funccall_params_cnt = 0;} expression {funccall_params_cnt++;} A;
+			: {funccall_params_cnt = 0;} expression {check_arg_type($2, cur_function, funccall_params_cnt);funccall_params_cnt++;} A;
 
 A
-			: ',' expression {funccall_params_cnt++;} A 
+			: ',' expression {check_arg_type($2, cur_function, funccall_params_cnt);;funccall_params_cnt++;} A 
 			| ;
 
 constant 

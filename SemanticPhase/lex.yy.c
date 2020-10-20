@@ -691,6 +691,12 @@ char *yytext;
         int valid;
     }ct[501];
 
+	struct func_table {
+		char params[100];
+		char name[100];
+		int valid;
+	} funct[501];
+
 	char get_identifier_type(char* matchstr) {
 		for(int i = 0; i < 501; i++) {
 			if(strcmp(st[i].name, matchstr) == 0) {
@@ -846,6 +852,16 @@ char *yytext;
 		}
 	}
 
+	void insert_func_table(char* func) {
+		int val = hash_function(func);
+		if(funct[val].valid == 0) {
+			strcpy(funct[val].name, func);
+			funct[val].valid = strlen(func);
+		} else {
+			puts("ERROR: Duplicate Function declaration");
+		}
+	}
+
 	void insert_symbol_table_params_cnt(char* str, int param_count) {
 		int pos = lookup_symbolTable(str);
 		st[pos].param_cnt = param_count;
@@ -854,6 +870,34 @@ char *yytext;
 		int pos = lookup_symbolTable(str);
 		return st[pos].param_cnt == cnt;
 	}
+
+	void insert_arg_type(char* type, char* func, int pos) {
+		int posi = lookup_symbolTable(func);
+		puts("INSERTING Function ==================");
+		puts(func);
+		puts(type);
+		printf("POS: %d\n", pos);
+		funct[posi].params[pos] = type[0];		
+	}
+
+
+	int check_arg_type(int typid, char* func, int pos) {
+		int posi = lookup_symbolTable(func);
+		puts("FOR: Function ==================");
+		if(posi == 0 || funct[posi].valid == 0) {
+			puts("ERROR: Function Not Declared");
+		}
+		puts(func);
+		printf("TYPE: %d, actual type: %s\n", typid, funct[posi].params);
+		if(typid == 5 && funct[posi].params[pos] == 'i') {
+
+		} else if(typid == 6 && funct[posi].params[pos] == 'c') {
+
+		}  else {
+			puts("ERROR: ARguments Type mismatch");
+		}
+	}
+
 	void insert_symbol_table_type(char *str1, char *str2)
 	{
 		for(int i = 0 ; i < 501 ; i++)
@@ -954,9 +998,10 @@ char *yytext;
 	char curval[20];
 	char cur_identifier[20];
 	char cur_function[20];
+	char cur_type[20];
 
-#line 959 "lex.yy.c"
-#line 960 "lex.yy.c"
+#line 1004 "lex.yy.c"
+#line 1005 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -1173,11 +1218,11 @@ YY_DECL
 		}
 
 	{
-#line 313 "Scanner.l"
+#line 358 "Scanner.l"
 
 
 
-#line 1181 "lex.yy.c"
+#line 1226 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -1237,13 +1282,13 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 /* rule 1 can match eol */
 YY_RULE_SETUP
-#line 316 "Scanner.l"
+#line 361 "Scanner.l"
 {yylineno++;}
 	YY_BREAK
 case 2:
 /* rule 2 can match eol */
 YY_RULE_SETUP
-#line 317 "Scanner.l"
+#line 362 "Scanner.l"
 {
     for(int i = 0; i < strlen(yytext); i++) {
         if(yytext[i] == '\n') yylineno++;
@@ -1252,13 +1297,13 @@ YY_RULE_SETUP
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 322 "Scanner.l"
+#line 367 "Scanner.l"
 ;
 	YY_BREAK
 case 4:
 /* rule 4 can match eol */
 YY_RULE_SETUP
-#line 323 "Scanner.l"
+#line 368 "Scanner.l"
 {
      for(int i = 0; i < strlen(yytext); i++) {
         if(yytext[i] == '\n') yylineno++;
@@ -1267,22 +1312,22 @@ YY_RULE_SETUP
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 328 "Scanner.l"
+#line 373 "Scanner.l"
 {printf("%s is a header declaration\n", yytext);}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 331 "Scanner.l"
+#line 376 "Scanner.l"
 { return(':'); }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 332 "Scanner.l"
+#line 377 "Scanner.l"
 
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 334 "Scanner.l"
+#line 379 "Scanner.l"
 {
     printf("%s is a keyword\n", yytext);
 	if(strcmp(yytext, "auto") == 0){
@@ -1424,14 +1469,14 @@ YY_RULE_SETUP
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 473 "Scanner.l"
+#line 518 "Scanner.l"
 {
   printf("In LineNo: %d, ERROR: Invalid Identifier : %s\n", yylineno, yytext);  exit(1);
 }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 476 "Scanner.l"
+#line 521 "Scanner.l"
 {
     printf("In LineNo: %d, ERROR: String usage error in %s\n", yylineno, yytext);  exit(1);
 }
@@ -1439,14 +1484,14 @@ YY_RULE_SETUP
 case 11:
 /* rule 11 can match eol */
 YY_RULE_SETUP
-#line 480 "Scanner.l"
+#line 525 "Scanner.l"
 {
     printf("In LineNo: %d, ERROR: Character usage error: %s\n", yylineno, yytext);  exit(1);
 }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 484 "Scanner.l"
+#line 529 "Scanner.l"
 {
     printf("%s is a identifier\n", yytext);
 	strcpy(Match_str, yytext);
@@ -1457,7 +1502,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 492 "Scanner.l"
+#line 537 "Scanner.l"
 {
     printf("%s is a constant\n", yytext);
 	strcpy(curval, yytext);
@@ -1472,7 +1517,7 @@ YY_RULE_SETUP
 case 14:
 /* rule 14 can match eol */
 YY_RULE_SETUP
-#line 503 "Scanner.l"
+#line 548 "Scanner.l"
 {
     printf("%s is a constant\n", yytext);
 	// insert_constantsTable(yytext, "Constant");
@@ -1487,7 +1532,7 @@ YY_RULE_SETUP
 case 15:
 /* rule 15 can match eol */
 YY_RULE_SETUP
-#line 514 "Scanner.l"
+#line 559 "Scanner.l"
 {
     printf("%s is a constant\n", yytext);
 	// insert_constantsTable(yytext, "Constant");
@@ -1501,7 +1546,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 526 "Scanner.l"
+#line 571 "Scanner.l"
 {
     printf("%s is a special symbol\n", yytext);
 	
@@ -1537,7 +1582,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 560 "Scanner.l"
+#line 605 "Scanner.l"
 {
     printf("%s is an operator\n", yytext);
 	if(strcmp(yytext, "++") == 0) return increment;
@@ -1576,10 +1621,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 596 "Scanner.l"
+#line 641 "Scanner.l"
 ECHO;
 	YY_BREAK
-#line 1583 "lex.yy.c"
+#line 1628 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2584,7 +2629,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 596 "Scanner.l"
+#line 641 "Scanner.l"
 
 
 

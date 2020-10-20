@@ -1,7 +1,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 
-void func(int a, int b, int c) {
+void func(char a, int b, int c) {
     char fasd;
 }
 
@@ -10,6 +10,7 @@ void func2(int a, int b) {
 }
 
 int main(int argc) {
-    int a= 5 - 2;
-    int arr[-1];
+    int b = 4;
+    int c = 6;
+    func(b, c, c);
 }

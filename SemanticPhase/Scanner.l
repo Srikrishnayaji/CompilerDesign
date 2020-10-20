@@ -24,6 +24,12 @@
         int valid;
     }ct[501];
 
+	struct func_table {
+		char params[100];
+		char name[100];
+		int valid;
+	} funct[501];
+
 	char get_identifier_type(char* matchstr) {
 		for(int i = 0; i < 501; i++) {
 			if(strcmp(st[i].name, matchstr) == 0) {
@@ -179,6 +185,16 @@
 		}
 	}
 
+	void insert_func_table(char* func) {
+		int val = hash_function(func);
+		if(funct[val].valid == 0) {
+			strcpy(funct[val].name, func);
+			funct[val].valid = strlen(func);
+		} else {
+			puts("ERROR: Duplicate Function declaration");
+		}
+	}
+
 	void insert_symbol_table_params_cnt(char* str, int param_count) {
 		int pos = lookup_symbolTable(str);
 		st[pos].param_cnt = param_count;
@@ -187,6 +203,34 @@
 		int pos = lookup_symbolTable(str);
 		return st[pos].param_cnt == cnt;
 	}
+
+	void insert_arg_type(char* type, char* func, int pos) {
+		int posi = lookup_symbolTable(func);
+		puts("INSERTING Function ==================");
+		puts(func);
+		puts(type);
+		printf("POS: %d\n", pos);
+		funct[posi].params[pos] = type[0];		
+	}
+
+
+	int check_arg_type(int typid, char* func, int pos) {
+		int posi = lookup_symbolTable(func);
+		puts("FOR: Function ==================");
+		if(posi == 0 || funct[posi].valid == 0) {
+			puts("ERROR: Function Not Declared");
+		}
+		puts(func);
+		printf("TYPE: %d, actual type: %s\n", typid, funct[posi].params);
+		if(typid == 5 && funct[posi].params[pos] == 'i') {
+
+		} else if(typid == 6 && funct[posi].params[pos] == 'c') {
+
+		}  else {
+			puts("ERROR: ARguments Type mismatch");
+		}
+	}
+
 	void insert_symbol_table_type(char *str1, char *str2)
 	{
 		for(int i = 0 ; i < 501 ; i++)
@@ -287,6 +331,7 @@
 	char curval[20];
 	char cur_identifier[20];
 	char cur_function[20];
+	char cur_type[20];
 
 %}
 
