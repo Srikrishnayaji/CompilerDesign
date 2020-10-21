@@ -152,6 +152,7 @@
 				if(st[i].valid == 1) {
 					if(st[i].scope == scope && strcmp(str, st[i].name) == 0) {
 						puts("ERROR: DUPLICATE declaration=============");
+						exit(-1);
 						return;
 					}
 				}
@@ -178,8 +179,6 @@
 	int remove_scope(int scope) {
 		for(int i = 0; i < 501; i++) {
 			if(st[i].valid && st[i].scope == scope) {
-				printf("SCOPE: +++ %d\n", scope);
-				puts(st[i].name);
 				st[i].scope = INT_MAX;
 			}
 		}
@@ -206,28 +205,23 @@
 
 	void insert_arg_type(char* type, char* func, int pos) {
 		int posi = lookup_symbolTable(func);
-		puts("INSERTING Function ==================");
-		puts(func);
-		puts(type);
-		printf("POS: %d\n", pos);
 		funct[posi].params[pos] = type[0];		
 	}
 
 
 	int check_arg_type(int typid, char* func, int pos) {
 		int posi = lookup_symbolTable(func);
-		puts("FOR: Function ==================");
 		if(posi == 0 || funct[posi].valid == 0) {
 			puts("ERROR: Function Not Declared");
+			exit(-1);
 		}
-		puts(func);
-		printf("TYPE: %d, actual type: %s\n", typid, funct[posi].params);
 		if(typid == 5 && funct[posi].params[pos] == 'i') {
 
 		} else if(typid == 6 && funct[posi].params[pos] == 'c') {
 
 		}  else {
-			puts("ERROR: ARguments Type mismatch");
+			puts("ERROR: Arguments mismatch");
+			exit(-1);
 		}
 	}
 
@@ -288,7 +282,7 @@
 
 	void print_symbol_table()
 	{
-		printf("%10s | %15s | %10s | %10s | %10s | %10s | %10s \n","SYMBOL", "CLASS", "TYPE","VALUE", "LINE NO", "SCOPE", "PARAM_CNT");
+		printf("%10s | %15s | %10s | %10s | %10s  \n","SYMBOL", "CLASS", "TYPE","VALUE", "LINE NO");
 		for(int i=0;i<81;i++) {
 			printf("-");
 		}
@@ -299,7 +293,7 @@
 			{
 				continue;
 			}
-			printf("%10s | %15s | %10s | %10s | %10d | %10d | %10d \n",st[i].name, st[i].Class, st[i].type, st[i].value, st[i].line_number, st[i].scope, st[i].param_cnt);
+			printf("%10s | %15s | %10s | %10s | %10d  \n",st[i].name, st[i].Class, st[i].type, st[i].value, st[i].line_number);
 		}
     }
 

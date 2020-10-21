@@ -81,9 +81,7 @@ declaration
 
 variable_declaration
 			: type_specifier variable_declaration_list ';' {
-				if($1 != $2) {
-					puts("variable_declaration mismatch");
-				}
+				
 			}
 			| structure_declaration;
 
@@ -99,19 +97,17 @@ V
 variable_declaration_identifier 
 			: IDENTIFIER {ins(), insert_symbol_table_scope(cur_identifier, cur_scope);} vdi {
 				char type = get_identifier_type(cur_identifier);
-				printf("%d ->___$2\n", $3);
+				// printf("%d ->___$2\n", $3);
 				if(type == 'i' && $3 == 5) $$ = 5;
 				else if(type == 'c' && $3 == 6) $$ = 6;
 				else if($3 != 127) {
-					puts("ERROR_MISMATCH DECL ");
+					printf("ERROR:  Declaration type Mismatch.\n");
+					yyerror("");
 				}
 			};
 
 vdi : identifier_array_type {$$ = 127;} | assignment expression {
-	printf("EXP__GIVES %d\n", $2);
-	$$ = $2;
-	printf("$$ is___%d\n", $$);
-	
+	$$ = $2;	
 }; 
 
 identifier_array_type
@@ -119,8 +115,8 @@ identifier_array_type
 			| ;
 
 initilization_params
-			: subtract NUM_CONSTANT ']' initilization {puts("ERROR: Array size negative!!");}
-			| NUM_CONSTANT {if(atoi(curval) == 0) {puts("ERROR: Array Size <= 0!!");}} ']' initilization
+			: subtract NUM_CONSTANT ']' initilization {puts("ERROR: Array size negative!!"); yyerror("");}
+			| NUM_CONSTANT {if(atoi(curval) == 0) {puts("ERROR: Array Size is 0!!"); yyerror("");}} ']' initilization
 			| ']' string_initilization;
 
 initilization
@@ -241,7 +237,8 @@ array_int_declarations_breakup
 expression 
 			: mutable expression_breakup {
 				if($1 != $2) {
-					printf("EXPR___mismatch\n");
+					printf("ERROR: Type Mismatch.\n");
+					yyerror("");
 				} else if($1 == 5) {
 					$$ = 5;
 				} else if($1 == 6) {
@@ -249,7 +246,6 @@ expression
 				}
 			}
 			| simple_expression {
-				puts("MATCHING HERE");
 				$$ = $1;
 			};
 
@@ -318,10 +314,11 @@ sum_expression
 				if($1 == 5 && $3 == 5)
 					$$ = 5;
 				else 
-					printf("Type mismatch");
+					printf("ERROR: Type mismatch.\n");
+					yyerror("");
 			}
 			| term {$$ = $1;};
-// 
+
 sum_operators 
 			: add 
 			| subtract ;
@@ -332,7 +329,8 @@ term
 					$$ = $1;
 				else 
 					{
-						printf("Type mismatch");
+						printf("ERROR: Type mismatch");
+						yyerror("");
 					};
 			} 
 			| factor {$$ = $1;};
@@ -354,7 +352,8 @@ mutable
 				if($2 == 5 || $1 == 5) 
 					$$ = 5;
 				else 
-					printf("EERROR");
+					printf("ERROR: Type Mismatch");
+					yyerror("");
 			};
 
 mutable_breakup
@@ -380,7 +379,8 @@ call
 				if(type == 'c') $$ = 6;
 
 				if(!verify_funccall_cnt(cur_function, funccall_params_cnt)) {
-					puts("ERROR: ____FUnction Call argumetns mismatch");
+					puts("ERROR: Function Call arguments count mismatch");
+					yyerror(cur_function);
 				}
 			};
 
@@ -455,6 +455,7 @@ void yyerror(char *s)
 	puts("=========================================================================");
 	printf("Parsing Failed at line no: %d\n", yylineno);
 	printf("Error: %s\n", yytext);
+	exit(0);
 	flag=1;
 }
 
