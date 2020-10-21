@@ -1704,7 +1704,7 @@ yyreduce:
 				if(type == 'i' && yyvsp[0] == 5) yyval = 5;
 				else if(type == 'c' && yyvsp[0] == 6) yyval = 6;
 				else if(yyvsp[0] != 127) {
-					printf("ERROR:  Declaration type Mismatch.\n");
+					puts("ERROR:  Declaration type Mismatch.\n");
 					yyerror("");
 				}
 			}
@@ -1807,7 +1807,7 @@ yyreduce:
 #line 237 "Parser.y"
                                                      {
 				if(yyvsp[-1] != yyvsp[0]) {
-					printf("ERROR: Type))) Mismatch.\n");
+					printf("ERROR: Type Mismatch.\n");
 					yyerror("");
 				} else if(yyvsp[-1] == 5) {
 					yyval = 5;

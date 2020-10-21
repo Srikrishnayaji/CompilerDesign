@@ -1,0 +1,4 @@
+Generating tokeniser program
+Generating y.tab.h
+Compiling lex.yy.c with y.tab.c
+Generated 'parser' executable

@@ -2,6 +2,7 @@
 void main()
 {
     int a, b, c, n = 10;
+    char dd;
     a = 0;
     b = 1;
     c = a+b;
@@ -13,5 +14,4 @@ void main()
         n--;
     } while (n>0);
     printf("Nth Fibonacci number is %d", c);
-}
 }

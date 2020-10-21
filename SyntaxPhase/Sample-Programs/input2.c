@@ -1,5 +1,10 @@
 #include<stdio.h>
 #include<stdlib.h>
+
+void ada() {
+    puts("Ok");
+}
+
 void main()
 {
     int n = 0;
@@ -9,6 +14,6 @@ void main()
     }
     else
     {
-        printf("ODD NUMBER\n");
+        printf("ODD NUMBER %d\n", ada + n);
     }    
 }

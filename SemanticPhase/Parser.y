@@ -100,7 +100,7 @@ variable_declaration_identifier
 				if(type == 'i' && $3 == 5) $$ = 5;
 				else if(type == 'c' && $3 == 6) $$ = 6;
 				else if($3 != 127) {
-					printf("ERROR:  Declaration type Mismatch.\n");
+					puts("ERROR:  Declaration type Mismatch.\n");
 					yyerror("");
 				}
 			};
