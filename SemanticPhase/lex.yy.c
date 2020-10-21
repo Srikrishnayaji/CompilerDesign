@@ -878,7 +878,11 @@ char *yytext;
 
 	void insert_arg_type(char* type, char* func, int pos) {
 		int posi = lookup_symbolTable(func);
-		funct[posi].params[pos] = type[0];		
+		funct[posi].params[pos] = type[0];	
+		if(type[0] == 'v') {
+			puts("ERROR: void type parameter!");
+			exit(-1);
+		}	
 	}
 
 
@@ -1021,8 +1025,8 @@ char *yytext;
 	char cur_function[20];
 	char cur_type[20];
 
-#line 1025 "lex.yy.c"
-#line 1026 "lex.yy.c"
+#line 1029 "lex.yy.c"
+#line 1030 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -1239,11 +1243,11 @@ YY_DECL
 		}
 
 	{
-#line 379 "Scanner.l"
+#line 383 "Scanner.l"
 
 
 
-#line 1247 "lex.yy.c"
+#line 1251 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -1303,13 +1307,13 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 /* rule 1 can match eol */
 YY_RULE_SETUP
-#line 382 "Scanner.l"
+#line 386 "Scanner.l"
 {yylineno++;}
 	YY_BREAK
 case 2:
 /* rule 2 can match eol */
 YY_RULE_SETUP
-#line 383 "Scanner.l"
+#line 387 "Scanner.l"
 {
     for(int i = 0; i < strlen(yytext); i++) {
         if(yytext[i] == '\n') yylineno++;
@@ -1318,13 +1322,13 @@ YY_RULE_SETUP
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 388 "Scanner.l"
+#line 392 "Scanner.l"
 ;
 	YY_BREAK
 case 4:
 /* rule 4 can match eol */
 YY_RULE_SETUP
-#line 389 "Scanner.l"
+#line 393 "Scanner.l"
 {
      for(int i = 0; i < strlen(yytext); i++) {
         if(yytext[i] == '\n') yylineno++;
@@ -1333,22 +1337,22 @@ YY_RULE_SETUP
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 394 "Scanner.l"
+#line 398 "Scanner.l"
 {printf("%s is a header declaration\n", yytext);}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 397 "Scanner.l"
+#line 401 "Scanner.l"
 { return(':'); }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 398 "Scanner.l"
+#line 402 "Scanner.l"
 
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 400 "Scanner.l"
+#line 404 "Scanner.l"
 {
     printf("%s is a keyword\n", yytext);
 	if(strcmp(yytext, "auto") == 0){
@@ -1490,14 +1494,14 @@ YY_RULE_SETUP
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 539 "Scanner.l"
+#line 543 "Scanner.l"
 {
   printf("In LineNo: %d, ERROR: Invalid Identifier : %s\n", yylineno, yytext);  exit(1);
 }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 542 "Scanner.l"
+#line 546 "Scanner.l"
 {
     printf("In LineNo: %d, ERROR: String usage error in %s\n", yylineno, yytext);  exit(1);
 }
@@ -1505,14 +1509,14 @@ YY_RULE_SETUP
 case 11:
 /* rule 11 can match eol */
 YY_RULE_SETUP
-#line 546 "Scanner.l"
+#line 550 "Scanner.l"
 {
     printf("In LineNo: %d, ERROR: Character usage error: %s\n", yylineno, yytext);  exit(1);
 }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 550 "Scanner.l"
+#line 554 "Scanner.l"
 {
     printf("%s is a identifier\n", yytext);
 	strcpy(Match_str, yytext);
@@ -1523,7 +1527,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 558 "Scanner.l"
+#line 562 "Scanner.l"
 {
     printf("%s is a constant\n", yytext);
 	strcpy(curval, yytext);
@@ -1538,7 +1542,7 @@ YY_RULE_SETUP
 case 14:
 /* rule 14 can match eol */
 YY_RULE_SETUP
-#line 569 "Scanner.l"
+#line 573 "Scanner.l"
 {
     printf("%s is a constant\n", yytext);
 	// insert_constantsTable(yytext, "Constant");
@@ -1553,7 +1557,7 @@ YY_RULE_SETUP
 case 15:
 /* rule 15 can match eol */
 YY_RULE_SETUP
-#line 580 "Scanner.l"
+#line 584 "Scanner.l"
 {
     printf("%s is a constant\n", yytext);
 	// insert_constantsTable(yytext, "Constant");
@@ -1567,7 +1571,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 592 "Scanner.l"
+#line 596 "Scanner.l"
 {
     printf("%s is a special symbol\n", yytext);
 	
@@ -1603,7 +1607,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 626 "Scanner.l"
+#line 630 "Scanner.l"
 {
     printf("%s is an operator\n", yytext);
 	if(strcmp(yytext, "++") == 0) return increment;
@@ -1642,10 +1646,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 662 "Scanner.l"
+#line 666 "Scanner.l"
 ECHO;
 	YY_BREAK
-#line 1649 "lex.yy.c"
+#line 1653 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2650,7 +2654,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 662 "Scanner.l"
+#line 666 "Scanner.l"
 
 
 

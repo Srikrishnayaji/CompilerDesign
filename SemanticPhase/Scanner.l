@@ -211,7 +211,11 @@
 
 	void insert_arg_type(char* type, char* func, int pos) {
 		int posi = lookup_symbolTable(func);
-		funct[posi].params[pos] = type[0];		
+		funct[posi].params[pos] = type[0];	
+		if(type[0] == 'v') {
+			puts("ERROR: void type parameter!");
+			exit(-1);
+		}	
 	}
 
 
