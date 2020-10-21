@@ -6,7 +6,6 @@
 	#include "string.h"
 	void ins();
 	void insV();
-	char get_identifier_type(char*);
 	int flag=0;
 
 	extern char Match_str[20];
@@ -24,6 +23,7 @@
 	int check_arg_type(int , char* , int);
 	void insert_arg_type(char*, char*, int);
 	void insert_func_table(char* );
+	char get_identifier_type(char* );
 %}
 
 %nonassoc IF
@@ -211,11 +211,21 @@ iterative_statements
 			| DO statement WHILE '(' simple_expression ')' ';';
 
 return_statement 
-			: RETURN return_statement_breakup;
+			: RETURN return_statement_breakup {
+				// printf(get_ideni)
+				if($2 == 5 && get_identifier_type(cur_function) == 'i') {
+
+				} else if($2 == 6 && get_identifier_type(cur_function) == 'c') {
+
+				} else if(!($2 == 127 && get_identifier_type(cur_function) == 'v')){
+					puts("ERROR: RETURN Type mismatch!");
+					yyerror(cur_function);
+				}
+			};
 
 return_statement_breakup
-			: ';' 
-			| expression ';' ;
+			: ';' {$$ = 127;}
+			| expression ';' {$$ = $1;};
 
 break_statement 
 			: BREAK ';' ;
@@ -420,6 +430,7 @@ void insert_symbol_table_value(char *, char *);
 void insert_constantsTable(char *, char *);
 void print_constant_table();
 void print_symbol_table();
+void print_func_table();
 
 int main(int argc , char **argv)
 {
@@ -451,6 +462,8 @@ int main(int argc , char **argv)
 		printf("\n\nCONSTANT TABLE\n");
 		printf("%30s %s\n", " ", "--------------");
 		print_constant_table();
+		printf("%30s %s\n", " ", "--------------");
+		print_func_table();
 	}
 }
 

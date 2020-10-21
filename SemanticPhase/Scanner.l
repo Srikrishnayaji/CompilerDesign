@@ -305,6 +305,25 @@
 		}
     }
 
+	void print_func_table() {
+		printf("%10s | %10s | %10s \n","Name", "Parameters Count", "PARAM TYPE");
+		for(int i=0;i<61;i++) {
+			printf("-");
+		}
+		puts("");
+		for(int i = 0; i < 501; i++) {
+			if(funct[i].valid) {
+				printf("%10s | %d ", funct[i].name, st[i].param_cnt);
+				printf("%17s", " ");
+				for(int j = 0; j < st[i].param_cnt; j++) {
+					printf(" %c, ", funct[i].params[j]);
+				}
+				puts("");
+			}
+		}
+
+	}
+
 	void print_constant_table()
 	{
 		printf("%10s | %15s\n","NAME", "TYPE");
