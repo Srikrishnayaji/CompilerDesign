@@ -33,7 +33,11 @@
 	char get_identifier_type(char* matchstr) {
 		for(int i = 0; i < 501; i++) {
 			if(strcmp(st[i].name, matchstr) == 0) {
-				puts(st[i].type);				
+				if(st[i].scope > cur_scope) {
+					printf("LINE: %d ", yylineno);
+					puts("ERROR: Undeclared Variable.");
+					exit(0);
+				}
 				return st[i].type[0];
 			}
 		}
@@ -151,7 +155,8 @@
 				
 				if(st[i].valid == 1) {
 					if(st[i].scope == scope && strcmp(str, st[i].name) == 0) {
-						puts("ERROR: DUPLICATE declaration=============");
+						printf("LINE: %d ", yylineno);
+						puts("ERROR: DUPLICATE declaration");
 						exit(-1);
 						return;
 					}
@@ -190,6 +195,7 @@
 			strcpy(funct[val].name, func);
 			funct[val].valid = strlen(func);
 		} else {
+			printf("LINE: %d ", yylineno);
 			puts("ERROR: Duplicate Function declaration");
 		}
 	}
@@ -212,6 +218,7 @@
 	int check_arg_type(int typid, char* func, int pos) {
 		int posi = lookup_symbolTable(func);
 		if(posi == 0 || funct[posi].valid == 0) {
+			printf("LINE: %d ", yylineno);
 			puts("ERROR: Function Not Declared");
 			exit(-1);
 		}
@@ -220,6 +227,7 @@
 		} else if(typid == 6 && funct[posi].params[pos] == 'c') {
 
 		}  else {
+			printf("LINE: %d ", yylineno);
 			puts("ERROR: Arguments mismatch");
 			exit(-1);
 		}

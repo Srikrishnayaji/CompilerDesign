@@ -97,7 +97,6 @@ V
 variable_declaration_identifier 
 			: IDENTIFIER {ins(), insert_symbol_table_scope(cur_identifier, cur_scope);} vdi {
 				char type = get_identifier_type(cur_identifier);
-				// printf("%d ->___$2\n", $3);
 				if(type == 'i' && $3 == 5) $$ = 5;
 				else if(type == 'c' && $3 == 6) $$ = 6;
 				else if($3 != 127) {
@@ -268,8 +267,12 @@ expression_breakup
 			| moduloAssignment expression {
 				$$ = $2;
 			}
-			| increment 
-			| decrement ;
+			| increment {
+				$$ = 5;
+			} 
+			| decrement {
+				$$  = 5;
+			};
 
 simple_expression 
 			: and_expression simple_expression_breakup {
@@ -344,6 +347,8 @@ factor
 mutable 
 			: IDENTIFIER {
 				// check identifire type and return;
+				puts(cur_identifier);
+				
 				char type = get_identifier_type(cur_identifier);
 				if(type == 'i') $$ = 5;
 				if(type == 'c') $$ = 6;
