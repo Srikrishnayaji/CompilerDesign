@@ -9,7 +9,7 @@ void func2(int a, int b) {
     char c = '3';
 }
 
-char main(int argc) {
-    char b = 5;
+int main(int argc) {
+    char b = '5';
     return b;
 }
