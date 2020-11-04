@@ -309,7 +309,9 @@ unary_relation_expression
 
 regular_expression 
 			: sum_expression regular_expression_breakup {
-				$$ = $1;
+				if($1 == $2) {
+					$$ = $1;
+				}
 			};
 
 regular_expression_breakup
@@ -324,8 +326,8 @@ relational_operators
 
 sum_expression 
 			: sum_expression sum_operators term {
-				if($1 == 5 && $3 == 5)
-					$$ = 5;
+				if($1 == $3)
+					$$ = $1;
 				else 
 					printf("ERROR: Type mismatch.\n");
 					yyerror("");
