@@ -1,20 +1,19 @@
-[31mT0 = 5
-[0m[31mif not 5 goto L0
-[0m[31mT1 = 5
-[0m[31mif not 5 goto L1
-[0m[31mT2 = 8
-[0m[31mT3 = 6
-[0m[31ma = 6
-[0m[31mgoto L2
-[0m[31mL1: 
-[0m[31mT4 = 123
-[0m[31ma = 123
-[0m[31mgoto L3
-[0m[31mL2: 
-[0m[31mT5 = 7
-[0m[31ma = 7
-[0m[31mT6 = 14
-[0m[31mT7 = 1
-[0m[31mT8 = c + 1
-[0m[31mc = T8
-[0m
+T0 = 5
+if not 5 goto L0
+T1 = 5
+if not 5 goto L1
+T2 = 8
+T3 = 6
+a = 6
+goto L2
+L1: 
+T4 = 123
+a = 123
+goto L3
+L2: 
+T5 = 7
+a = 7
+T6 = 14
+T7 = 1
+T8 = c + 1
+c = T8

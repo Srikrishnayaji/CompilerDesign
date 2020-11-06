@@ -12,6 +12,7 @@
 	void insV();
 	int flag=0;
 	FILE* fp;
+	int T_cnt = 0, valtop = 0, lbltop = 0, L_cnt = 0;
 
 	extern char Match_str[20];
 	extern char Match_type[20];
@@ -435,10 +436,10 @@ arguments
 			: arguments_list | ;
 
 arguments_list 
-			: {funccall_params_cnt = 0;} expression {check_arg_type($2, cur_function, funccall_params_cnt);funccall_params_cnt++;} A;
+			: {funccall_params_cnt = 0;} expression {fprintf(fp, "param %s\n", val_stack[valtop].value); check_arg_type($2, cur_function, funccall_params_cnt);funccall_params_cnt++;} A;
 
 A
-			: ',' expression {check_arg_type($2, cur_function, funccall_params_cnt);;funccall_params_cnt++;} A 
+			: ',' expression {fprintf(fp, "param %s\n", val_stack[valtop].value); check_arg_type($2, cur_function, funccall_params_cnt);;funccall_params_cnt++;} A 
 			| ;
 
 constant 
@@ -463,7 +464,6 @@ void insert_constantsTable(char *, char *);
 void print_constant_table();
 void print_symbol_table();
 void print_func_table();
-int T_cnt = 0, valtop = 0, lbltop = 0, L_cnt = 0;
 void val_push(char* str) {
 	strcpy(val_stack[++valtop].value, str);
 }
@@ -473,7 +473,7 @@ void if_end_label() {
 	strcpy(code, "L");
 	sprintf(code + 1, "%d", labl_stack[lbltop].id);
 	printf(_RED "%s: \n" _RESET, code);
-	fprintf(fp, _RED "%s: \n" _RESET, code);
+	fprintf(fp, "%s: \n", code);
 	lbltop--;
 }
 
@@ -482,7 +482,7 @@ void if_not_goto() {
 	strcpy(code, "L");
 	sprintf(code + 1, "%d", L_cnt);
 	printf(_RED "if not %s goto %s\n" _RESET, val_stack[valtop].value, code);
-	fprintf(fp, _RED "if not %s goto %s\n" _RESET, val_stack[valtop].value, code);
+	fprintf(fp, "if not %s goto %s\n", val_stack[valtop].value, code);
 	labl_stack[++lbltop].id = L_cnt++;
 }
 
@@ -491,11 +491,11 @@ void if_end_goto() {
 	strcpy(code, "L");
 	sprintf(code + 1, "%d", L_cnt);
 	printf(_RED "goto %s\n" _RESET, code);
-	fprintf(fp, _RED "goto %s\n" _RESET, code);
+	fprintf(fp,  "goto %s\n" , code);
 	code[0] = 'L';
 	sprintf(code + 1, "%d", labl_stack[lbltop].id);
 	printf(_RED "%s: \n" _RESET, code);
-	fprintf(fp, _RED "%s: \n" _RESET, code);
+	fprintf(fp, "%s: \n", code);
 	labl_stack[lbltop].id = L_cnt++;
 }
 
@@ -504,7 +504,7 @@ void identifier_TAC()  {
 	strcpy(code, "T");
 	sprintf(code + 1, "%d", T_cnt);
 	printf(_RED "%s = %s\n" _RESET , code, cur_identifier);	
-	fprintf(fp, _RED "%s = %s\n" _RESET , code, cur_identifier);
+	fprintf(fp, "%s = %s\n" , code, cur_identifier);
 	T_cnt++;
 	val_push(code);	
 }
@@ -513,7 +513,7 @@ void constant_TAC() {
 	strcpy(code, "T");
 	sprintf(code + 1, "%d", T_cnt);
 	printf(_RED "%s = %s\n" _RESET , code, curval);	
-	fprintf(fp, _RED "%s = %s\n" _RESET , code, curval);
+	fprintf(fp,  "%s = %s\n"  , code, curval);
 	T_cnt++;
 	val_push(curval);	
 }
@@ -521,7 +521,7 @@ void constant_TAC() {
 void reassign_TAC() {
 	puts("HI");
 	printf(_RED "%s = %s\n" _RESET, val_stack[valtop-1].value, val_stack[valtop].value);
-	fprintf(fp, _RED "%s = %s\n" _RESET, val_stack[valtop-1].value, val_stack[valtop].value);
+	fprintf(fp, "%s = %s\n", val_stack[valtop-1].value, val_stack[valtop].value);
 	valtop -= 2;
 }
 
@@ -531,7 +531,7 @@ void TAC() {
 
 	sprintf(code + 1, "%d", T_cnt);
 	printf(_RED "%s = %s %s %s\n" _RESET, code, val_stack[valtop-2].value, val_stack[valtop-1].value, val_stack[valtop].value);
-	fprintf(fp, _RED "%s = %s %s %s\n" _RESET, code, val_stack[valtop-2].value, val_stack[valtop-1].value, val_stack[valtop].value);
+	fprintf(fp, "%s = %s %s %s\n", code, val_stack[valtop-2].value, val_stack[valtop-1].value, val_stack[valtop].value);
 	valtop -= 2;
 	strcpy(val_stack[valtop].value, code);
 	T_cnt++;
