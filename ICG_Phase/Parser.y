@@ -1,12 +1,17 @@
 %{
+	#define _RED		"\x1b[31m"
+	#define ANSI_COLOR_GREEN	"\x1b[32m"
+	#define ANSI_COLOR_CYAN		"\x1b[36m"
+	#define _RESET	"\x1b[0m"
 	void yyerror(char* s);
 	int yylex();
-	#include "stdio.h"
-	#include "stdlib.h"
-	#include "string.h"
+	#include <stdio.h>
+	#include <stdlib.h>
+	#include <string.h>
 	void ins();
 	void insV();
 	int flag=0;
+	
 
 	extern char Match_str[20];
 	extern char Match_type[20];
@@ -24,6 +29,19 @@
 	void insert_arg_type(char*, char*, int);
 	void insert_func_table(char* );
 	char get_identifier_type(char* );
+	struct labl {
+		char value[500];
+		int id;
+	} val_stack[100], labl_stack[100];
+	void val_push(char* );
+	void TAC();
+	void reassign_TAC();
+	void identifier_TAC();
+	void constant_TAC();
+	void if_not_goto();
+	void if_end_goto();
+	void if_end_label();
+	// void assign_TAC();
 %}
 
 %nonassoc IF
@@ -96,6 +114,7 @@ V
 
 variable_declaration_identifier 
 			: IDENTIFIER {ins(), insert_symbol_table_scope(cur_identifier, cur_scope);} vdi {
+				// identifier_TAC();
 				char type = get_identifier_type(cur_identifier);
 				if(type == 'i' && $3 == 5) $$ = 5;
 				else if(type == 'c' && $3 == 6) $$ = 6;
@@ -106,6 +125,7 @@ variable_declaration_identifier
 			};
 
 vdi : identifier_array_type {$$ = 127;} | assignment expression {
+	// identifier_TAC();
 	$$ = $2;	
 }; 
 
@@ -199,11 +219,11 @@ expression_statment
 			| ';' ;
 
 conditional_statements 
-			: IF '(' simple_expression ')' statement conditional_statements_breakup;
+			: IF {if_not_goto();} '(' simple_expression ')' statement {if_end_goto();} conditional_statements_breakup;
 
 conditional_statements_breakup
-			: ELSE statement
-			| ;
+			: ELSE statement {}
+			| {};
 
 iterative_statements 
 			: WHILE '(' simple_expression ')' statement 
@@ -245,6 +265,7 @@ array_int_declarations_breakup
 
 expression 
 			: mutable expression_breakup {
+				// reassign_TAC();
 				if($1 != $2) {
 					printf("ERROR: Type Mismatch.\n");
 					yyerror("");
@@ -255,11 +276,16 @@ expression
 				}
 			}
 			| simple_expression {
+				// reassign_TAC();
 				$$ = $1;
 			};
 
 expression_breakup
 			: assignment expression {
+				for(int i = 0; i < 8; i++) {
+					printf("%s ***** \n", val_stack[i].value);
+				}
+				reassign_TAC();
 				$$ = $2;
 			}
 			| additionAssignment expression {
@@ -326,32 +352,34 @@ relational_operators
 
 sum_expression 
 			: sum_expression sum_operators term {
+				TAC();
 				if($1 == $3)
 					$$ = $1;
-				else 
+				else {
 					printf("ERROR: Type mismatch.\n");
 					yyerror("");
+				}
 			}
 			| term {$$ = $1;};
 
 sum_operators 
-			: add 
-			| subtract ;
+			: add {val_push("+");};
+			| subtract {val_push("-");};
 
 term
 			: term MULOP factor {
+				TAC();
 				if($1 == $3)
 					$$ = $1;
-				else 
-					{
-						printf("ERROR: Type mismatch");
-						yyerror("");
-					};
+				else {
+					printf("ERROR: Type mismatch");
+					yyerror("");
+				};
 			} 
 			| factor {$$ = $1;};
 
 MULOP 
-			: multiplication | divide | modulo ;
+			: multiplication {val_push("*");}| divide {val_push("/");} | modulo {val_push("%");};
 
 factor 
 			: immutable {$$ = $1;}| mutable ;
@@ -359,6 +387,8 @@ factor
 mutable 
 			: IDENTIFIER {
 				// check identifire type and return;
+				// identifier_TAC();
+				val_push(cur_identifier);
 				puts(cur_identifier);
 				
 				char type = get_identifier_type(cur_identifier);
@@ -412,9 +442,9 @@ A
 			| ;
 
 constant 
-			: NUM_CONSTANT 	{ insV(); $$=5;} 
-			| STRING_CONSTANT	{ insV(); } 
-			| CHAR_CONSTANT{ insV(); $$=6;};
+			: NUM_CONSTANT 	{ insV(); constant_TAC(); $$=5;} 
+			| STRING_CONSTANT	{ insV(); constant_TAC();} 
+			| CHAR_CONSTANT{ insV(); constant_TAC(); $$=6;};
 
 %%
 
@@ -433,6 +463,71 @@ void insert_constantsTable(char *, char *);
 void print_constant_table();
 void print_symbol_table();
 void print_func_table();
+int T_cnt = 0, valtop = 0, lbltop = 0, L_cnt = 0;
+void val_push(char* str) {
+	strcpy(val_stack[++valtop].value, str);
+}
+
+void if_end_label() {
+	char code[100] = {0};
+	strcpy(code, "L");
+	sprintf(code + 1, "%d", labl_stack[lbltop].id);
+	printf(_RED "%s: \n" _RESET, code);
+	lbltop--;
+}
+
+void if_not_goto() {
+	char code[100] = {0};
+	strcpy(code, "L");
+	sprintf(code + 1, "%d", L_cnt);
+	printf(_RED "if not %s goto %s\n" _RESET, val_stack[valtop].value, code);
+	labl_stack[++lbltop].id = L_cnt++;
+}
+
+void if_end_goto() {
+	char code[100] = {0};
+	strcpy(code, "L");
+	sprintf(code + 1, "%d", L_cnt);
+	printf(_RED "goto %s\n" _RESET, code);
+	code[0] = 'L';
+	sprintf(code + 1, "%d", labl_stack[lbltop].id);
+	printf(_RED "%s: \n" _RESET, code);
+	labl_stack[lbltop].id = L_cnt++;
+}
+
+void identifier_TAC()  {
+	char code[100] = {0};
+	strcpy(code, "T");
+	sprintf(code + 1, "%d", T_cnt);
+	printf(_RED "%s = %s\n" _RESET , code, cur_identifier);	
+	T_cnt++;
+	val_push(code);	
+}
+void constant_TAC() {
+	char code[100] = {0};
+	strcpy(code, "T");
+	sprintf(code + 1, "%d", T_cnt);
+	// printf(_RED "%s = %s\n" _RESET , code, curval);	
+	T_cnt++;
+	val_push(curval);	
+}
+
+void reassign_TAC() {
+	puts("HI");
+	printf(_RED "%s = %s\n" _RESET, val_stack[valtop-1].value, val_stack[valtop].value);
+	valtop -= 2;
+}
+
+void TAC() {
+	char code[100] = {0};
+	strcpy(code, "T");
+
+	sprintf(code + 1, "%d", T_cnt);
+	printf(_RED "%s = %s %s %s\n" _RESET, code, val_stack[valtop-2].value, val_stack[valtop-1].value, val_stack[valtop].value);
+	valtop -= 2;
+	strcpy(val_stack[valtop].value, code);
+	T_cnt++;
+}
 
 int main(int argc , char **argv)
 {

@@ -1,15 +1,16 @@
 #include<stdio.h>
-#include<stdlib.h>
 
-void func(char b) {
+int main() {
     int a = 5;
-}
-void func2(int a, int b) {
-    int dfa;
-    char c = '3';
+    if(a == 5) {
+        if(a > 8) {
+            a = 6;
+        }
+        a = 123;
+    } else {
+        a = 7;
+    }
+    int c = 14;
+    c = c + 1;
 }
 
-int main(int argc) {
-    char b = '5';
-    return b;
-}
