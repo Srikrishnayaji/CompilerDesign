@@ -42,7 +42,9 @@
 	void if_not_goto();
 	void if_end_goto();
 	void if_end_label();
-	// void assign_TAC();
+	void iter_label();
+	void iter_loop_label();	// void assign_TAC();
+	void TAC_assign();
 %}
 
 %nonassoc IF
@@ -220,15 +222,15 @@ expression_statment
 			| ';' ;
 
 conditional_statements 
-			: IF {if_not_goto();} '(' simple_expression ')' statement {if_end_goto();} conditional_statements_breakup;
+			: IF '(' simple_expression {if_not_goto();} ')' statement {if_end_goto();} conditional_statements_breakup {if_end_label();};
 
 conditional_statements_breakup
-			: ELSE statement {}
-			| {};
+			: ELSE statement
+			| ;
 
 iterative_statements 
-			: WHILE '(' simple_expression ')' statement 
-			| FOR '(' expression ';' simple_expression ';' expression ')' 
+			: WHILE '(' {iter_label();} simple_expression {if_not_goto();} ')' statement {iter_loop_label();}
+			| FOR '(' expression ';' {iter_label();} simple_expression {if_not_goto();}';' expression ')' statement {iter_loop_label();}
 			| DO statement WHILE '(' simple_expression ')' ';';
 
 return_statement 
@@ -265,7 +267,8 @@ array_int_declarations_breakup
 			| ;
 
 expression 
-			: mutable expression_breakup {
+			: mutable {puts(cur_identifier);} expression_breakup {
+				puts("CCCLLLEEED");
 				// reassign_TAC();
 				if($1 != $2) {
 					printf("ERROR: Type Mismatch.\n");
@@ -289,44 +292,60 @@ expression_breakup
 				reassign_TAC();
 				$$ = $2;
 			}
-			| additionAssignment expression {
+			| additionAssignment {val_push("+");} expression {
+				// for(int i = 0; i < 10; i++) {
+				// 	printf("&&&& %s\n", val_stack[i].value);
+				// }
+				TAC_assign();
+				// for(int i = 0; i < 10; i++) {
+				// 	printf("&&&& %s\n", val_stack[i].value);
+				// }
+				// reassign_TAC();
+				// reassign_TAC();
 				$$ = $2;
 			}
-			| subtractionAssignment expression {
+			| subtractionAssignment {val_push("-");} expression {
+				TAC_assign();
 				$$ = $2;
 			}
-			| multiplicationAssignment expression {
+			| multiplicationAssignment {val_push("*");} expression {
+				TAC_assign();
 				$$ = $2;
 			}
-			| divisionAssignment expression {
+			| divisionAssignment {val_push("/");} expression {
 				$$ = $2;
 			}
-			| moduloAssignment expression {
+			| moduloAssignment {val_push("/");} expression {
+				TAC_assign();
 				$$ = $2;
 			}
-			| increment {
+			| increment {val_push("+"); val_push("1");}{
+				TAC_assign();
 				$$ = 5;
 			} 
-			| decrement {
+			| decrement {val_push("-"); val_push("1");}{
+				TAC_assign();
 				$$  = 5;
 			};
 
 simple_expression 
 			: and_expression simple_expression_breakup {
+				if($1 != -98 && $2 != -98) TAC();
 				$$ = $1;
 			};
 
 simple_expression_breakup 
-			: or and_expression simple_expression_breakup | ;
+			: or {val_push("||");} and_expression simple_expression_breakup {}| {$$ = -98;};
 
 and_expression 
 			: unary_relation_expression and_expression_breakup {
+				if($2 != -98 && $1 != -98) TAC();
 				$$ = $1;
 			};
 
 and_expression_breakup
-			: and unary_relation_expression and_expression_breakup
-			| ;
+			: and {val_push("&&");} unary_relation_expression and_expression_breakup
+			| {$$ = -98;};
 
 unary_relation_expression 
 			: not unary_relation_expression 
@@ -336,6 +355,9 @@ unary_relation_expression
 
 regular_expression 
 			: sum_expression regular_expression_breakup {
+				{
+					if($2 != -98 && $1 != -98) TAC();
+				}
 				if($1 == $2) {
 					$$ = $1;
 				}
@@ -345,11 +367,11 @@ regular_expression_breakup
 			: relational_operators sum_expression {
 				$$ = $2;
 			}
-			| ;
+			| {$$ = -98;};
 
 relational_operators 
-			: greaterthanAssignment | lessthanAssignment | greaterthan 
-			| lessthan | equality | inequality ;
+			: greaterthanAssignment {val_push(">=");} | lessthanAssignment {val_push("<=");}| greaterthan {val_push(">");} 
+			| lessthan {val_push("<");}| equality {val_push("==");}| inequality {val_push("!=");};
 
 sum_expression 
 			: sum_expression sum_operators term {
@@ -389,8 +411,15 @@ mutable
 			: IDENTIFIER {
 				// check identifire type and return;
 				// identifier_TAC();
-				val_push(cur_identifier);
+				puts("PUSHED");
 				puts(cur_identifier);
+				printf("%d __\n", valtop);
+				val_push(cur_identifier);
+				printf("%d __\n", valtop);
+				for(int i = 0; i < 5; i++) {
+					printf("&&&& %s\n", val_stack[i].value);
+				}
+				
 				
 				char type = get_identifier_type(cur_identifier);
 				if(type == 'i') $$ = 5;
@@ -500,12 +529,31 @@ void if_end_goto() {
 	labl_stack[lbltop].id = L_cnt++;
 }
 
+void iter_label() {
+	char code[100] = {0};
+	strcpy(code, "L");
+	sprintf(code + 1, "%d", L_cnt);
+	fprintf(fp, "%s:\n", code);
+	labl_stack[++lbltop].id = L_cnt++;
+}
+
+void iter_loop_label()  {
+	char code[100] = {0};
+	strcpy(code, "L");
+	sprintf(code + 1, "%d", labl_stack[lbltop-1].id);
+	fprintf(fp, "goto %s\n", code);
+	sprintf(code + 1, "%d", labl_stack[lbltop].id);
+	fprintf(fp, "%s: \n", code);
+	lbltop -= 2;
+}
+
 void identifier_TAC()  {
 	char code[100] = {0};
+	
 	strcpy(code, "T");
 	sprintf(code + 1, "%d", T_cnt);
 	printf(_RED "%s = %s\n" _RESET , code, cur_identifier);	
-	fprintf(fp, "%s = %s\n" , code, cur_identifier);
+	fprintf(fp, "IDENTIFIER_TAC %s = %s\n" , code, cur_identifier);
 	T_cnt++;
 	val_push(code);	
 }
@@ -514,7 +562,7 @@ void constant_TAC() {
 	strcpy(code, "T");
 	sprintf(code + 1, "%d", T_cnt);
 	printf(_RED "%s = %s\n" _RESET , code, curval);	
-	fprintf(fp,  "%s = %s\n"  , code, curval);
+	fprintf(fp,  "CONSTANT_TAC %s = %s\n"  , code, curval);
 	T_cnt++;
 	val_push(curval);	
 }
@@ -522,20 +570,32 @@ void constant_TAC() {
 void reassign_TAC() {
 	puts("HI");
 	printf(_RED "%s = %s\n" _RESET, val_stack[valtop-1].value, val_stack[valtop].value);
-	fprintf(fp, "%s = %s\n", val_stack[valtop-1].value, val_stack[valtop].value);
+	fprintf(fp, "REASSIGN_TAC %s = %s\n", val_stack[valtop-1].value, val_stack[valtop].value);
 	valtop -= 2;
 }
 
 void TAC() {
 	char code[100] = {0};
 	strcpy(code, "T");
-
+	if(valtop-2 < 0) return;
+	// if(strcmp(val_stack))
 	sprintf(code + 1, "%d", T_cnt);
 	printf(_RED "%s = %s %s %s\n" _RESET, code, val_stack[valtop-2].value, val_stack[valtop-1].value, val_stack[valtop].value);
-	fprintf(fp, "%s = %s %s %s\n", code, val_stack[valtop-2].value, val_stack[valtop-1].value, val_stack[valtop].value);
+	fprintf(fp, "_TAC %s = %s %s %s\n", code, val_stack[valtop-2].value, val_stack[valtop-1].value, val_stack[valtop].value);
 	valtop -= 2;
 	strcpy(val_stack[valtop].value, code);
 	T_cnt++;
+}
+void TAC_assign() {
+	char code[100] = {0};
+	strcpy(code, "T");
+
+	sprintf(code + 1, "%d", T_cnt);
+	printf(_RED "%s = %s %s %s\n" _RESET, code, val_stack[valtop-2].value, val_stack[valtop-1].value, val_stack[valtop].value);
+	fprintf(fp, "TAC_ASIGN %s = %s %s %s\n", val_stack[valtop-2].value, val_stack[valtop-2].value, val_stack[valtop-1].value, val_stack[valtop].value);
+	valtop -= 2;
+	// strcpy(val_stack[valtop].value, );
+	// T_cnt++;
 }
 
 int main(int argc , char **argv)
@@ -581,7 +641,7 @@ void yyerror(char *s)
 	puts("=========================================================================");
 	printf("Parsing Failed at line no: %d\n", yylineno);
 	printf("Error: %s\n", yytext);
-	exit(0);
+	// exit(0);
 	flag=1;
 }
 
