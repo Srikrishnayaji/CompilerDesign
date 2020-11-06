@@ -892,8 +892,8 @@ static const yytype_int16 yyrline[] =
      338,   338,   338,   341,   347,   347,   348,   351,   352,   357,
      367,   370,   373,   373,   373,   374,   374,   374,   377,   386,
      389,   390,   393,   402,   405,   405,   405,   408,   408,   411,
-     428,   437,   438,   441,   444,   447,   452,   452,   466,   466,
-     469,   469,   469,   472,   472,   473,   476,   477,   478
+     428,   437,   438,   441,   444,   447,   452,   452,   469,   469,
+     472,   472,   472,   475,   475,   476,   479,   480,   481
 };
 #endif
 
@@ -1775,7 +1775,7 @@ yyreduce:
 
   case 54: /* function_declaration_type: type_specifier IDENTIFIER '('  */
 #line 182 "Parser.y"
-                                                         { params_cnt = 0; ins(); strcpy(cur_function, cur_identifier); insert_symbol_table_scope(cur_identifier, cur_scope); insert_func_table(cur_function);}
+                                                         { params_cnt = 0; ins(); strcpy(cur_function, cur_identifier); insert_symbol_table_scope(cur_identifier, cur_scope); insert_func_table(cur_function); fprintf(fp, "function %s:\n ", cur_function);}
 #line 1780 "y.tab.c"
     break;
 
@@ -2331,48 +2331,51 @@ yyreduce:
 					puts("ERROR: Function Call arguments count mismatch");
 					yyerror(cur_function);
 				}
+				char tmp[100] = {0};
+				sprintf(tmp, "%d", funccall_params_cnt);
+				fprintf(fp, "pop_params %s\n", tmp);
 			}
-#line 2336 "y.tab.c"
+#line 2339 "y.tab.c"
     break;
 
   case 160: /* $@24: %empty  */
-#line 469 "Parser.y"
+#line 472 "Parser.y"
                           {funccall_params_cnt = 0;}
-#line 2342 "y.tab.c"
+#line 2345 "y.tab.c"
     break;
 
   case 161: /* $@25: %empty  */
-#line 469 "Parser.y"
-                                                                {fprintf(fp, "arg %s\n", val_stack[valtop].value); check_arg_type(yyvsp[0], cur_function, funccall_params_cnt);funccall_params_cnt++;}
-#line 2348 "y.tab.c"
+#line 472 "Parser.y"
+                                                                {fprintf(fp, "push_param %s\n", val_stack[valtop].value); check_arg_type(yyvsp[0], cur_function, funccall_params_cnt);funccall_params_cnt++;}
+#line 2351 "y.tab.c"
     break;
 
   case 163: /* $@26: %empty  */
-#line 472 "Parser.y"
-                                         {fprintf(fp, "param %s\n", val_stack[valtop].value); check_arg_type(yyvsp[0], cur_function, funccall_params_cnt);;funccall_params_cnt++;}
-#line 2354 "y.tab.c"
+#line 475 "Parser.y"
+                                         {fprintf(fp, "push_param %s\n", val_stack[valtop].value); check_arg_type(yyvsp[0], cur_function, funccall_params_cnt);;funccall_params_cnt++;}
+#line 2357 "y.tab.c"
     break;
 
   case 166: /* constant: NUM_CONSTANT  */
-#line 476 "Parser.y"
+#line 479 "Parser.y"
                                         { insV(); constant_TAC(); yyval=5;}
-#line 2360 "y.tab.c"
+#line 2363 "y.tab.c"
     break;
 
   case 167: /* constant: STRING_CONSTANT  */
-#line 477 "Parser.y"
+#line 480 "Parser.y"
                                                 { insV(); constant_TAC();}
-#line 2366 "y.tab.c"
+#line 2369 "y.tab.c"
     break;
 
   case 168: /* constant: CHAR_CONSTANT  */
-#line 478 "Parser.y"
+#line 481 "Parser.y"
                                        { insV(); constant_TAC(); yyval=6;}
-#line 2372 "y.tab.c"
+#line 2375 "y.tab.c"
     break;
 
 
-#line 2376 "y.tab.c"
+#line 2379 "y.tab.c"
 
       default: break;
     }
@@ -2566,7 +2569,7 @@ yyreturn:
   return yyresult;
 }
 
-#line 480 "Parser.y"
+#line 483 "Parser.y"
 
 
 extern FILE *yyin;

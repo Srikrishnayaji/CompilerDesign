@@ -179,7 +179,7 @@ function_declaration
 			: function_declaration_type function_declaration_param_statement;
 
 function_declaration_type
-			: type_specifier IDENTIFIER '('  { params_cnt = 0; ins(); strcpy(cur_function, cur_identifier); insert_symbol_table_scope(cur_identifier, cur_scope); insert_func_table(cur_function);};
+			: type_specifier IDENTIFIER '('  { params_cnt = 0; ins(); strcpy(cur_function, cur_identifier); insert_symbol_table_scope(cur_identifier, cur_scope); insert_func_table(cur_function); fprintf(fp, "function %s:\n ", cur_function);};
 
 function_declaration_param_statement
 			: params ')' statement;
@@ -460,16 +460,19 @@ call
 					puts("ERROR: Function Call arguments count mismatch");
 					yyerror(cur_function);
 				}
+				char tmp[100] = {0};
+				sprintf(tmp, "%d", funccall_params_cnt);
+				fprintf(fp, "pop_params %s\n", tmp);
 			};
 
 arguments 
 			: arguments_list | ;
 
 arguments_list 
-			: {funccall_params_cnt = 0;} expression {fprintf(fp, "arg %s\n", val_stack[valtop].value); check_arg_type($2, cur_function, funccall_params_cnt);funccall_params_cnt++;} A;
+			: {funccall_params_cnt = 0;} expression {fprintf(fp, "push_param %s\n", val_stack[valtop].value); check_arg_type($2, cur_function, funccall_params_cnt);funccall_params_cnt++;} A;
 
 A
-			: ',' expression {fprintf(fp, "param %s\n", val_stack[valtop].value); check_arg_type($2, cur_function, funccall_params_cnt);;funccall_params_cnt++;} A 
+			: ',' expression {fprintf(fp, "push_param %s\n", val_stack[valtop].value); check_arg_type($2, cur_function, funccall_params_cnt);;funccall_params_cnt++;} A 
 			| ;
 
 constant 
