@@ -11,7 +11,7 @@
 	void ins();
 	void insV();
 	int flag=0;
-	
+	FILE* fp;
 
 	extern char Match_str[20];
 	extern char Match_type[20];
@@ -473,6 +473,7 @@ void if_end_label() {
 	strcpy(code, "L");
 	sprintf(code + 1, "%d", labl_stack[lbltop].id);
 	printf(_RED "%s: \n" _RESET, code);
+	fprintf(fp, _RED "%s: \n" _RESET, code);
 	lbltop--;
 }
 
@@ -481,6 +482,7 @@ void if_not_goto() {
 	strcpy(code, "L");
 	sprintf(code + 1, "%d", L_cnt);
 	printf(_RED "if not %s goto %s\n" _RESET, val_stack[valtop].value, code);
+	fprintf(fp, _RED "if not %s goto %s\n" _RESET, val_stack[valtop].value, code);
 	labl_stack[++lbltop].id = L_cnt++;
 }
 
@@ -489,9 +491,11 @@ void if_end_goto() {
 	strcpy(code, "L");
 	sprintf(code + 1, "%d", L_cnt);
 	printf(_RED "goto %s\n" _RESET, code);
+	fprintf(fp, _RED "goto %s\n" _RESET, code);
 	code[0] = 'L';
 	sprintf(code + 1, "%d", labl_stack[lbltop].id);
 	printf(_RED "%s: \n" _RESET, code);
+	fprintf(fp, _RED "%s: \n" _RESET, code);
 	labl_stack[lbltop].id = L_cnt++;
 }
 
@@ -500,6 +504,7 @@ void identifier_TAC()  {
 	strcpy(code, "T");
 	sprintf(code + 1, "%d", T_cnt);
 	printf(_RED "%s = %s\n" _RESET , code, cur_identifier);	
+	fprintf(fp, _RED "%s = %s\n" _RESET , code, cur_identifier);
 	T_cnt++;
 	val_push(code);	
 }
@@ -507,7 +512,8 @@ void constant_TAC() {
 	char code[100] = {0};
 	strcpy(code, "T");
 	sprintf(code + 1, "%d", T_cnt);
-	// printf(_RED "%s = %s\n" _RESET , code, curval);	
+	printf(_RED "%s = %s\n" _RESET , code, curval);	
+	fprintf(fp, _RED "%s = %s\n" _RESET , code, curval);
 	T_cnt++;
 	val_push(curval);	
 }
@@ -515,6 +521,7 @@ void constant_TAC() {
 void reassign_TAC() {
 	puts("HI");
 	printf(_RED "%s = %s\n" _RESET, val_stack[valtop-1].value, val_stack[valtop].value);
+	fprintf(fp, _RED "%s = %s\n" _RESET, val_stack[valtop-1].value, val_stack[valtop].value);
 	valtop -= 2;
 }
 
@@ -524,6 +531,7 @@ void TAC() {
 
 	sprintf(code + 1, "%d", T_cnt);
 	printf(_RED "%s = %s %s %s\n" _RESET, code, val_stack[valtop-2].value, val_stack[valtop-1].value, val_stack[valtop].value);
+	fprintf(fp, _RED "%s = %s %s %s\n" _RESET, code, val_stack[valtop-2].value, val_stack[valtop-1].value, val_stack[valtop].value);
 	valtop -= 2;
 	strcpy(val_stack[valtop].value, code);
 	T_cnt++;
@@ -531,6 +539,7 @@ void TAC() {
 
 int main(int argc , char **argv)
 {
+	fp = fopen("TAC.txt", "w");
 	yyin = fopen(argv[1], "r");
 	yyparse();
 	if((bbracketsopen-bbracketsclose)){
@@ -562,6 +571,7 @@ int main(int argc , char **argv)
 		printf("%30s %s\n", " ", "--------------");
 		print_func_table();
 	}
+	fclose(fp);
 }
 
 
