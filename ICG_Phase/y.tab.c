@@ -2139,7 +2139,7 @@ yyreduce:
 
   case 147: /* $@11: %empty  */
 #line 439 "Parser.y"
-                                                                {fprintf(fp, "param %s\n", val_stack[valtop].value); check_arg_type(yyvsp[0], cur_function, funccall_params_cnt);funccall_params_cnt++;}
+                                                                {fprintf(fp, "arg %s\n", val_stack[valtop].value); check_arg_type(yyvsp[0], cur_function, funccall_params_cnt);funccall_params_cnt++;}
 #line 2144 "y.tab.c"
     break;
 

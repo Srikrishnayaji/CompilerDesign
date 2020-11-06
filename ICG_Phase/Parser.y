@@ -423,6 +423,7 @@ call
 			: IDENTIFIER '(' {strcpy(cur_function, cur_identifier);} arguments ')' {
 				puts(cur_identifier);
 				char type = get_identifier_type(cur_function);
+				fprintf(fp, "goto %s\n", cur_function);
 				if(type == 'i') $$ = 5;
 				if(type == 'c') $$ = 6;
 
@@ -436,7 +437,7 @@ arguments
 			: arguments_list | ;
 
 arguments_list 
-			: {funccall_params_cnt = 0;} expression {fprintf(fp, "param %s\n", val_stack[valtop].value); check_arg_type($2, cur_function, funccall_params_cnt);funccall_params_cnt++;} A;
+			: {funccall_params_cnt = 0;} expression {fprintf(fp, "arg %s\n", val_stack[valtop].value); check_arg_type($2, cur_function, funccall_params_cnt);funccall_params_cnt++;} A;
 
 A
 			: ',' expression {fprintf(fp, "param %s\n", val_stack[valtop].value); check_arg_type($2, cur_function, funccall_params_cnt);;funccall_params_cnt++;} A 
