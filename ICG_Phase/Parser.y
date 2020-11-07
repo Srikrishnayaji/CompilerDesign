@@ -117,7 +117,7 @@ V
 
 variable_declaration_identifier 
 			: IDENTIFIER {ins(), insert_symbol_table_scope(cur_identifier, cur_scope); val_push(cur_identifier);} vdi {
-				reassign_TAC();
+				if($3 != 127) reassign_TAC();
 				char type = get_identifier_type(cur_identifier);
 				if(type == 'i' && $3 == 5) $$ = 5;
 				else if(type == 'c' && $3 == 6) $$ = 6;
@@ -546,6 +546,8 @@ void constant_TAC() {
 }
 
 void reassign_TAC() {
+	if(valtop-1 < 0) return;
+	// if(val_stack[valtop].value[0] == 0 || val_stack[valtop-1].value[0] == 0) return;
 	printf(_RED "%s = %s\n" _RESET, val_stack[valtop-1].value, val_stack[valtop].value);
 	fprintf(fp, "REASSIGN_TAC %s = %s\n", val_stack[valtop-1].value, val_stack[valtop].value);
 	valtop -= 2;

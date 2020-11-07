@@ -5,13 +5,10 @@ void main()
     a = 0;
     b = 1;
     c = a+b;
-    do
-    {
+    while(n > 0) {
         a = b;
         b = c;
         c = a+b;
         n--;
-    } while (n>0);
-    printf("Nth Fibonacci number is %d", c);
-}
+    }
 }
