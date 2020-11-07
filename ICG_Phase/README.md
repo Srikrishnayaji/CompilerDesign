@@ -1,4 +1,4 @@
-# Compiler Design
+# Compiler Design ICG Phase
 
 #### Project By:
     @snkr2000
