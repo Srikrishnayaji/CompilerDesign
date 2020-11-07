@@ -117,10 +117,6 @@ V
 
 variable_declaration_identifier 
 			: IDENTIFIER {ins(), insert_symbol_table_scope(cur_identifier, cur_scope); val_push(cur_identifier);} vdi {
-				for(int i = 0; i < 5; i++) {
-					printf("%s ^^^^\n", val_stack[i].value);
-				}
-				// identifier_TAC();
 				reassign_TAC();
 				char type = get_identifier_type(cur_identifier);
 				if(type == 'i' && $3 == 5) $$ = 5;
@@ -132,7 +128,6 @@ variable_declaration_identifier
 			};
 
 vdi : identifier_array_type {$$ = 127;} | assignment expression {
-	// identifier_TAC();
 	$$ = $2;	
 }; 
 
@@ -239,7 +234,6 @@ iterative_statements
 
 return_statement 
 			: RETURN return_statement_breakup {
-				// printf(get_ideni)
 				if($2 == 5 && get_identifier_type(cur_function) == 'i') {
 
 				} else if($2 == 6 && get_identifier_type(cur_function) == 'c') {
@@ -272,8 +266,6 @@ array_int_declarations_breakup
 
 expression 
 			: mutable {puts(cur_identifier);} expression_breakup {
-				puts("CCCLLLEEED");
-				// reassign_TAC();
 				if($1 != $2) {
 					printf("ERROR: Type Mismatch.\n");
 					yyerror("");
@@ -290,22 +282,11 @@ expression
 
 expression_breakup
 			: assignment expression {
-				for(int i = 0; i < 8; i++) {
-					printf("%s ***** \n", val_stack[i].value);
-				}
 				reassign_TAC();
 				$$ = $2;
 			}
 			| additionAssignment {val_push("+");} expression {
-				// for(int i = 0; i < 10; i++) {
-				// 	printf("&&&& %s\n", val_stack[i].value);
-				// }
 				TAC_assign();
-				// for(int i = 0; i < 10; i++) {
-				// 	printf("&&&& %s\n", val_stack[i].value);
-				// }
-				// reassign_TAC();
-				// reassign_TAC();
 				$$ = $2;
 			}
 			| subtractionAssignment {val_push("-");} expression {
@@ -414,16 +395,7 @@ factor
 mutable 
 			: IDENTIFIER {
 				// check identifire type and return;
-				// identifier_TAC();
-				puts("PUSHED");
-				puts(cur_identifier);
-				printf("%d __\n", valtop);
 				val_push(cur_identifier);
-				printf("%d __\n", valtop);
-				for(int i = 0; i < 5; i++) {
-					printf("&&&& %s\n", val_stack[i].value);
-				}
-				
 				
 				char type = get_identifier_type(cur_identifier);
 				if(type == 'i') $$ = 5;
@@ -585,7 +557,6 @@ void TAC() {
 	char code[100] = {0};
 	strcpy(code, "T");
 	if(valtop-2 < 0) return;
-	// if(strcmp(val_stack))
 	sprintf(code + 1, "%d", T_cnt);
 	printf(_RED "%s = %s %s %s\n" _RESET, code, val_stack[valtop-2].value, val_stack[valtop-1].value, val_stack[valtop].value);
 	fprintf(fp, "_TAC %s = %s %s %s\n", code, val_stack[valtop-2].value, val_stack[valtop-1].value, val_stack[valtop].value);
@@ -601,8 +572,6 @@ void TAC_assign() {
 	printf(_RED "%s = %s %s %s\n" _RESET, code, val_stack[valtop-2].value, val_stack[valtop-1].value, val_stack[valtop].value);
 	fprintf(fp, "TAC_ASIGN %s = %s %s %s\n", val_stack[valtop-2].value, val_stack[valtop-2].value, val_stack[valtop-1].value, val_stack[valtop].value);
 	valtop -= 2;
-	// strcpy(val_stack[valtop].value, );
-	// T_cnt++;
 }
 
 int main(int argc , char **argv)
