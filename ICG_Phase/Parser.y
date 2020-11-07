@@ -43,7 +43,7 @@
 	void if_end_goto();
 	void if_end_label();
 	void iter_label();
-	void iter_loop_label();	// void assign_TAC();
+	void iter_loop_label();	
 	void TAC_assign();
 %}
 
@@ -230,7 +230,7 @@ conditional_statements_breakup
 iterative_statements 
 			: WHILE '(' {iter_label();} simple_expression {if_not_goto();} ')' statement {iter_loop_label();}
 			| FOR '(' expression ';' {iter_label();} simple_expression {if_not_goto();}';' expression ')' statement {iter_loop_label();}
-			| DO statement WHILE '(' simple_expression ')' ';';
+			| {iter_label();} DO statement WHILE '(' simple_expression {if_not_goto(); iter_loop_label();} ')' ';';
 
 return_statement 
 			: RETURN return_statement_breakup {
@@ -531,7 +531,7 @@ void identifier_TAC()  {
 	strcpy(code, "T");
 	sprintf(code + 1, "%d", T_cnt);
 	printf(_RED "%s = %s\n" _RESET , code, cur_identifier);	
-	fprintf(fp, "IDENTIFIER_TAC %s = %s\n" , code, cur_identifier);
+	fprintf(fp, " %s = %s\n" , code, cur_identifier);
 	T_cnt++;
 	val_push(code);	
 }
@@ -540,7 +540,7 @@ void constant_TAC() {
 	strcpy(code, "T");
 	sprintf(code + 1, "%d", T_cnt);
 	printf(_RED "%s = %s\n" _RESET , code, curval);	
-	fprintf(fp,  "CONSTANT_TAC %s = %s\n"  , code, curval);
+	fprintf(fp,  " %s = %s\n"  , code, curval);
 	T_cnt++;
 	val_push(code);	
 }
@@ -549,7 +549,7 @@ void reassign_TAC() {
 	if(valtop-1 < 0) return;
 	// if(val_stack[valtop].value[0] == 0 || val_stack[valtop-1].value[0] == 0) return;
 	printf(_RED "%s = %s\n" _RESET, val_stack[valtop-1].value, val_stack[valtop].value);
-	fprintf(fp, "REASSIGN_TAC %s = %s\n", val_stack[valtop-1].value, val_stack[valtop].value);
+	fprintf(fp, " %s = %s\n", val_stack[valtop-1].value, val_stack[valtop].value);
 	valtop -= 2;
 }
 
@@ -559,7 +559,7 @@ void TAC() {
 	if(valtop-2 < 0) return;
 	sprintf(code + 1, "%d", T_cnt);
 	printf(_RED "%s = %s %s %s\n" _RESET, code, val_stack[valtop-2].value, val_stack[valtop-1].value, val_stack[valtop].value);
-	fprintf(fp, "_TAC %s = %s %s %s\n", code, val_stack[valtop-2].value, val_stack[valtop-1].value, val_stack[valtop].value);
+	fprintf(fp, "%s = %s %s %s\n", code, val_stack[valtop-2].value, val_stack[valtop-1].value, val_stack[valtop].value);
 	valtop -= 2;
 	strcpy(val_stack[valtop].value, code);
 	T_cnt++;
@@ -570,7 +570,7 @@ void TAC_assign() {
 
 	sprintf(code + 1, "%d", T_cnt);
 	printf(_RED "%s = %s %s %s\n" _RESET, code, val_stack[valtop-2].value, val_stack[valtop-1].value, val_stack[valtop].value);
-	fprintf(fp, "TAC_ASIGN %s = %s %s %s\n", val_stack[valtop-2].value, val_stack[valtop-2].value, val_stack[valtop-1].value, val_stack[valtop].value);
+	fprintf(fp, "%s = %s %s %s\n", val_stack[valtop-2].value, val_stack[valtop-2].value, val_stack[valtop-1].value, val_stack[valtop].value);
 	valtop -= 2;
 }
 

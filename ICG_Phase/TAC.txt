@@ -1,20 +1,20 @@
 function main:
- CONSTANT_TAC T0 = 10
-REASSIGN_TAC n = T0
-CONSTANT_TAC T1 = 0
-REASSIGN_TAC a = T1
-CONSTANT_TAC T2 = 1
-REASSIGN_TAC b = T2
-_TAC T3 = a + b
-REASSIGN_TAC c = T3
+  T0 = 10
+ n = T0
+ T1 = 0
+ a = T1
+ T2 = 1
+ b = T2
+T3 = a + b
+ c = T3
 L0:
-CONSTANT_TAC T4 = 0
-_TAC T5 = n > T4
-if not T5 goto L1
-REASSIGN_TAC a = b
-REASSIGN_TAC b = c
-_TAC T6 = a + b
-REASSIGN_TAC c = T6
-TAC_ASIGN n = n - 1
+ a = b
+ b = c
+T4 = a + b
+ c = T4
+n = n - 1
+ T5 = 0
+T6 = n > T5
+if not T6 goto L1
 goto L0
 L1: 

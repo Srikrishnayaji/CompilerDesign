@@ -5,10 +5,11 @@ void main()
     a = 0;
     b = 1;
     c = a+b;
-    while(n > 0) {
+    do
+    {
         a = b;
         b = c;
         c = a+b;
         n--;
-    }
+    } while (n>0);
 }
