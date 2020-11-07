@@ -265,7 +265,7 @@ array_int_declarations_breakup
 			| ;
 
 expression 
-			: mutable {puts(cur_identifier);} expression_breakup {
+			: mutable expression_breakup {
 				if($1 != $2) {
 					printf("ERROR: Type Mismatch.\n");
 					yyerror("");
@@ -426,7 +426,6 @@ immutable
 
 call
 			: IDENTIFIER '(' {strcpy(cur_function, cur_identifier);} arguments ')' {
-				puts(cur_identifier);
 				char type = get_identifier_type(cur_function);
 				fprintf(fp, "goto %s\n", cur_function);
 				if(type == 'i') $$ = 5;
@@ -547,7 +546,6 @@ void constant_TAC() {
 }
 
 void reassign_TAC() {
-	puts("HI");
 	printf(_RED "%s = %s\n" _RESET, val_stack[valtop-1].value, val_stack[valtop].value);
 	fprintf(fp, "REASSIGN_TAC %s = %s\n", val_stack[valtop-1].value, val_stack[valtop].value);
 	valtop -= 2;
@@ -618,7 +616,7 @@ void yyerror(char *s)
 	printf("Parsing Failed at line no: %d\n", yylineno);
 	printf("Error: %s\n", yytext);
 	// exit(0);
-	flag=1;
+	// flag=1;
 }
 
 void ins()
